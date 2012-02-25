@@ -56,7 +56,7 @@ void BaRobot::SetComPort(int port)
 char* BaRobot::SendString(char* message)
 {
 	// transfermode == Usb || (transfermode == com and port > 1 && port < 21 )
-	if (isValidTransferMode && strlen(message) < 200)
+	if (isValidTransferMode && strlen(message) < 90)
 	{
 		return communicate(message);
 	}
@@ -79,7 +79,8 @@ char* BaRobot::communicate(char* message)
 	{
 		cprintf(comPort - 1, newMessage);   							// writes to the serial line (comPort -1) because Com counts from 1
 		char* retBuffer = new char[1024];								// return buffer for reading serial line (what has the device to say?)
-		Sleep(100);														// wait for the device to send (from rs232 library where is said minimum 100 ms)
+		Sleep(150);														// wait for the device to send (from rs232 library where is said minimum 100 ms)
+																		// + 100 seems to small for signs up 80
 		PollComport(comPort - 1,(unsigned char*) retBuffer, 1024);   	// read the serial line
 
 		CloseComport(comPort - 1);										// very important to close the serial connection
