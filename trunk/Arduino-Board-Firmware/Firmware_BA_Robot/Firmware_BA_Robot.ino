@@ -2,6 +2,8 @@
 #include "ServoMotor.h"
 #include <EEPROM.h>
 
+#include "StringArray.h"
+
 ServoMotor servo[8];
 String inputString = "";
 boolean stringComplete = false;
@@ -62,9 +64,15 @@ void handleSerialCommands()
    */
   // Serial.print(inputString); 
   // clear the string:
+  // StringArray array = GetCommandList(inputString);
+  // Serial.print(array.GetString(0));   
+  // Serial.print(array.GetString(0));   
   if (inputString == "READ")
   {
     byte data = EEPROM.read(0);
+    inputString = inputString.substring(0,inputString.indexOf('\0')) + ": " + String(data,HEX) + "\0";
+    Serial.print(inputString); 
+    /*
     String temp = String(data,HEX);
     char p[10];
     temp.toCharArray(p,10);
@@ -77,6 +85,7 @@ void handleSerialCommands()
       // Serial.print(inputString); 
     // Serial.print(" ");
     Serial.print(p);
+    */
   } 
   else if (inputString == "ON")
   {
@@ -92,12 +101,29 @@ void handleSerialCommands()
   stringComplete = false;
 }
 
+StringArray GetCommandList(String inputstr)
+{
+  StringArray retVal = StringArray();
+  
+  String temp = inputstr;
+
+  while (true)
+  {
+    if (temp.indexOf(';') == -1)
+      break;
+    else 
+    {
+      retVal.AddString(temp.substring(0,temp.indexOf(';')));
+      temp = temp.substring(temp.indexOf(';') + 1);
+    }
+  }
+  return retVal;
+}
+
 char** SubstringCommandList(String inputstr)
 {
-  Serial.println("Start: ");
-  Serial.print(inputString);
   String temp = inputstr;
-  int counter = 0;
+  int counter = 1;
   while (true)
   {
     if (temp.indexOf(';') == -1)
@@ -108,21 +134,25 @@ char** SubstringCommandList(String inputstr)
       temp = temp.substring(temp.indexOf(';') + 1);
     }
   }
+  
   currentCommandCount = counter;
-  Serial.print(currentCommandCount);
 
-  char* retVal[counter];
+  char** retVal = new char*;
   temp = inputstr;
 
-  for (int i = 0; i < counter; i++)
+  for (int i = 0; i < counter -1; i++)
   {
     unsigned int length = (unsigned int)temp.indexOf(';');
     char tempStorage[length];
-    temp.substring(0,temp.indexOf(';')).toCharArray(tempStorage, temp.indexOf(';'));
-    Serial.println(tempStorage);
+    String tempString = temp.substring(0,temp.indexOf(';'));
+    tempString.toCharArray(tempStorage, temp.indexOf(';'));
+    Serial.print(tempStorage);
     retVal[i] = tempStorage;
     temp = temp.substring(temp.indexOf(';'));
   }
+  char tempStorage[temp.length()];
+  temp.toCharArray(tempStorage, temp.length());
+  retVal[counter] = tempStorage;
   return retVal;
 }
 

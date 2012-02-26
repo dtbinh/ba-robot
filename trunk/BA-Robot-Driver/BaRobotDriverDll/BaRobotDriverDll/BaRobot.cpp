@@ -97,6 +97,8 @@ char* BaRobot::communicateRS232(char* message)
 			buffer[i] = retBuffer[i];
 		}
 		buffer[counterBytes] = '\0';
+		// free storage
+		delete[] retBuffer;
 		return buffer;												// returns what the device said
 	}
 	CloseComport(comPort - 1);
