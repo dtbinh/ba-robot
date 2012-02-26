@@ -17,12 +17,27 @@ namespace TestDLL
             brw.SetMode(BaRobotLibrary.TransferMode.COM);
             brw.SetComPort(10);
 
+            while (true)
+            {
+                Console.Write("Input : ");
+                String temp = Console.ReadLine();
+                if (temp == "exit")
+                    break;
+
+                String output = brw.SendString(temp);
+                Console.WriteLine("Output: " + output);
+            }
+            /*
             String temp = brw.SendString("ON");
             Console.WriteLine(temp);
             Console.ReadKey();
             temp = brw.SendString("OFF");
             Console.WriteLine(temp);
             Console.ReadKey();
+            temp = brw.SendString("READ");
+            Console.WriteLine(temp);
+            Console.ReadKey();
+            */
         }
     }
 }
