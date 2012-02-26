@@ -1,5 +1,7 @@
-Das ist der Treiber für das Arduino Board.
+Arduino Mega ADK.inf:
 
-Der Treiber ist Standard, bis auf die Abweichung, dass die Description auf "BA-ROBOT" gesetzt wurde.
+Original Arduino Treiber für das Arduino Mega ADK Board.
 
-Arduino Mega ADK.inf
+BA-Robot-Arduino Mega ADK.inf
+
+Angepasster Treiber für das Arduino Mega ADK Board.
