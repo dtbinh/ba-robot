@@ -21,7 +21,7 @@ namespace BaRobotLibrary
 		int comPort;
 		int transferMode;
 		bool isValidTransferMode;
-		char* communicate(char* message);
+		char* communicateRS232(char* message);
 		string toString();
 	};
 }

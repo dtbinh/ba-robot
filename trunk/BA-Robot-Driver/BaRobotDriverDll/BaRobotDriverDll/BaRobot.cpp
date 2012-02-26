@@ -58,7 +58,10 @@ char* BaRobot::SendString(char* message)
 	// transfermode == Usb || (transfermode == com and port > 1 && port < 21 )
 	if (isValidTransferMode && strlen(message) < 90)
 	{
-		return communicate(message);
+		if (transferMode == TransferMode::COM)
+			return communicateRS232(message);
+		else
+			return communicateRS232(message);
 	}
 	else
 	{
@@ -67,7 +70,7 @@ char* BaRobot::SendString(char* message)
 }
 
 #pragma warning( disable : 4996 )
-char* BaRobot::communicate(char* message)
+char* BaRobot::communicateRS232(char* message)
 {
 	int notOkay = OpenComport(comPort - 1,9600);						// gives 1 if error and 0 if okay
 	char* newMessage = new char[strlen(message) + 2];
