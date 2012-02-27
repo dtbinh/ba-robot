@@ -19,6 +19,7 @@ BaRobot::BaRobot()
 	comPort = 0;
 	transferMode = TransferMode::COM;
 	isValidTransferMode = false;
+	isConnected = false;
 }
 
 void BaRobot::SetMode(int tm)
@@ -53,15 +54,38 @@ void BaRobot::SetComPort(int port)
 		comPort = 0;
 }
 
+bool BaRobot::StartCommunication()
+{
+	char* retVal = SendString("ON");
+	isConnected = (! strcmp(retVal, "ON"));
+	return isConnected;
+}
+
+bool BaRobot::StopCommunication()
+{
+	if (isConnected)
+	{
+		char* retVal = SendString("OFF");
+		isConnected = (strcmp(retVal, "OFF"));
+        return ! isConnected;
+	}
+	else 
+		return isConnected;
+}
+
 char* BaRobot::SendString(char* message)
 {
 	// transfermode == Usb || (transfermode == com and port > 1 && port < 21 )
-	if (isValidTransferMode && strlen(message) < 90)
+	if (isValidTransferMode && strlen(message) < 90 && ( isConnected || (!strcmp(message,"ON")) ))
 	{
 		if (transferMode == TransferMode::COM)
 			return communicateRS232(message);
 		else
 			return communicateRS232(message);
+	}
+	else if (! isConnected)
+	{
+		return "Not Connected...";
 	}
 	else
 	{
@@ -116,3 +140,15 @@ string BaRobot::toString()
 
 	return stream.str();
 }
+
+BaRobot::BaRobot(const BaRobot& obj)
+{
+	*this = obj;
+}
+
+BaRobot& BaRobot::operator=(const BaRobot& rhs) 
+{
+  *this = rhs;
+  return *this;
+}
+

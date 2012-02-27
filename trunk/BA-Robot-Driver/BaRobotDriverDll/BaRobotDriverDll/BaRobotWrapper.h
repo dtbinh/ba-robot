@@ -14,11 +14,15 @@ namespace BaRobotLibrary
 
 	public:
 		BaRobotWrapper();
+		BaRobotWrapper(const BaRobotWrapper& obj);
+		BaRobotWrapper& BaRobotWrapper::operator=(const BaRobotWrapper& rhs) ;
 		~BaRobotWrapper();
 		void Dispose(bool disposing);
 		void Dispose();
 		void SetMode(int tm);
 		void SetComPort(int cp);
+		bool StartCommunication();
+		bool StopCommunication();
 		String* SendString(String* message);
 	};
 }
