@@ -15,16 +15,31 @@ namespace TestDLL
             string temp2 = robot.ToString();
             BaRobotLibrary.BaRobotWrapper brw = new BaRobotLibrary.BaRobotWrapper();
             brw.SetMode(BaRobotLibrary.TransferMode.COM);
-            brw.SetComPort(10);
+            brw.SetComPort(4);
 
             while (true)
             {
                 Console.Write("Input : ");
                 String temp = Console.ReadLine();
+                String output = String.Empty;
+                switch (temp)
+                {
+                    case "exit":
+                        break;
+                    case "ON":
+                        output = brw.StartCommunication().ToString();
+                        break;
+                    case "OFF":
+                        output = brw.StopCommunication().ToString();
+                        break;
+                    default:
+                        output = brw.SendString(temp);
+                        break;
+                }
+
                 if (temp == "exit")
                     break;
-
-                String output = brw.SendString(temp);
+               
                 Console.WriteLine("Output: " + output);
             }
             /*

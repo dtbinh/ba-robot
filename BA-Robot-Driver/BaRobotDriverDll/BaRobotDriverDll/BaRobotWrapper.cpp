@@ -44,6 +44,16 @@ void BaRobotWrapper::SetComPort(int cp)
 	_pBaRobot->SetComPort(cp);
 }
 
+bool BaRobotWrapper::StartCommunication()
+{
+	return _pBaRobot->StartCommunication();
+}
+
+bool BaRobotWrapper::StopCommunication()
+{
+	return _pBaRobot->StopCommunication();
+}
+
 String* BaRobotWrapper::SendString(String* message)
 {
 	IntPtr messageBuffer = Marshal::StringToHGlobalAnsi(message);
@@ -54,9 +64,23 @@ String* BaRobotWrapper::SendString(String* message)
 
 	String* decodedString =	Marshal::PtrToStringAnsi(pDecoded);
 	
-	delete pDecoded;
+	pDecoded = new char[1];
+	pDecoded[0] = '\0';
+	delete[] pDecoded;
 
 	Marshal::FreeHGlobal(pMessage);
 
 	return decodedString;
+}
+
+BaRobotWrapper::BaRobotWrapper(const BaRobotWrapper& obj)
+{
+	this->_pBaRobot = obj._pBaRobot;
+	*this = obj;
+}
+
+BaRobotWrapper& BaRobotWrapper::operator=(const BaRobotWrapper& rhs) 
+{
+    *this = rhs;
+    return *this;
 }

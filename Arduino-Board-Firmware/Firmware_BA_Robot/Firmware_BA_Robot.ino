@@ -92,11 +92,15 @@ void handleSerialCommands()
     digitalWrite(13,HIGH);
     Serial.print(inputString); 
   }
-  else
+  else if (inputString == "OFF")
   {
     digitalWrite(13,LOW);
     Serial.print(inputString); 
   } 
+  else
+  {
+    Serial.print(inputString);
+  }
   inputString = "";
   stringComplete = false;
 }
