@@ -7,16 +7,24 @@
   #include "WProgram.h"
 #endif
 
+struct Liste
+{
+  String data;
+  Liste* next;
+};
+
 class StringArray
 {
 public:
   StringArray();
   void AddString(String string);
   String GetString(int index);
-  
-private:
-  
+  void DeleteString(int index);
+  int GetElementCount() {return elements;}
+private:  
   int elements;
+  Liste *completeListe;
+  Liste *currentListe;
 };
 
 #endif

@@ -57,7 +57,8 @@ void BaRobot::SetComPort(int port)
 bool BaRobot::StartCommunication()
 {
 	char* retVal = SendString("ON");
-	isConnected = (! strcmp(retVal, "ON"));
+	// ausgelagert nach SendString
+	// isConnected = (! strcmp(retVal, "ON"));
 	return isConnected;
 }
 
@@ -78,6 +79,9 @@ char* BaRobot::SendString(char* message)
 	// transfermode == Usb || (transfermode == com and port > 1 && port < 21 )
 	if (isValidTransferMode && strlen(message) < 90 && ( isConnected || (!strcmp(message,"ON")) ))
 	{
+		if (!isConnected)
+			isConnected = true;
+
 		if (transferMode == TransferMode::COM)
 			return communicateRS232(message);
 		else

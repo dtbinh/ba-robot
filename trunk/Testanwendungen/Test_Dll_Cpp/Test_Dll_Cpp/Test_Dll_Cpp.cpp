@@ -1,28 +1,30 @@
-// Test_Dll_Cpp.cpp : Definiert den Einstiegspunkt für die Konsolenanwendung.
-//
-
+// Includes
 #include "stdafx.h"
 #include <iostream>
 #include <string> 
 
+// Usings
 #using <mscorlib.dll>
 using namespace System::Runtime::InteropServices;
 using namespace std;
 using namespace System;
 using namespace BaRobotLibrary;
 
+// Function declarations
 void handleCommmands(char input);
 void MarshalString ( String ^ s, string& os );
 void turnRobotOn();
 void turnRobotOff();
 void sendString();
 
+// Managed Class Wrapper for Global Use of BaRobotWrapper
 ref class ManagedWrapper
 {
 public:
     static BaRobotWrapper^ BaRobot;
 };
 
+// Main
 int _tmain(int argc, _TCHAR* argv[])
 {
 	ManagedWrapper::BaRobot = gcnew BaRobotWrapper();
@@ -48,6 +50,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	return 0;
 }
 
+// handle Of User input
 void handleCommmands(char input)
 {
 	switch(input)
@@ -66,6 +69,7 @@ void handleCommmands(char input)
 	}
 }
 
+// Turn Communication with Robot on
 void turnRobotOn()
 {
 	if (ManagedWrapper::BaRobot->StartCommunication())
@@ -84,6 +88,7 @@ void turnRobotOn()
 	}
 }
 
+// Turn Communication with Robot off
 void turnRobotOff()
 {
 	if (ManagedWrapper::BaRobot->StopCommunication())
@@ -102,13 +107,14 @@ void turnRobotOff()
 	}
 }
 
+// Send a String to Robot
 void sendString()
 {
 	cin.clear(); 
     cin.ignore(cin.rdbuf()->in_avail());
 	cout << endl << "What to send: ";
-	char* sendString = new char[];
-	cin >> sendString;
+	char* sendString = new char[100];
+	cin.getline(sendString, 100);
 	System::String^ str = gcnew System::String(sendString);
 	System::String^ outString = ManagedWrapper::BaRobot->SendString(str);
 	std::string outArray;
@@ -120,6 +126,7 @@ void sendString()
 	// system("pause");
 }
 
+// Converting from System::String^ to std::string
 void MarshalString ( String ^ s, string& os ) 
 {
    using namespace Runtime::InteropServices;
