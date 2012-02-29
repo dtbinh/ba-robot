@@ -27,4 +27,5 @@ private:
   Liste *currentListe;
 };
 
-#endif
+#endif // _STRINGARRAY_H
+

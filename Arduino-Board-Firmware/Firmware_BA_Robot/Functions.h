@@ -10,11 +10,15 @@
 #include <EEPROM.h>
 #include "StringArray.h"
 
+// von main
 extern String inputString;
 extern boolean stringComplete;
 
+// Serial Event liest Daten von der Serial Line
 void serialEvent();
+// handelt eingelesenen String ab (switch(commands))
 void handleSerialCommands();
+// Substringt den eingelesenen String
 StringArray GetCommandList(String inputstr);
 
-#endif
+#endif // _FUNCTIONS_H

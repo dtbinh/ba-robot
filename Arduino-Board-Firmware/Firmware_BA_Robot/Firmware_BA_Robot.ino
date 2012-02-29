@@ -2,9 +2,6 @@
 #include <EEPROM.h>
 #include "Functions.h"
 
-// #include "ServoMotor.h"
-// ServoMotor servo[8];
-
 String inputString = "";
 boolean stringComplete = false;
 
@@ -18,6 +15,7 @@ void setup() {
 // Main Loop
 void loop() {
 
+  // wenn String eingelesen dann abhandeln
   if (stringComplete) 
   {
     if (inputString == "")
