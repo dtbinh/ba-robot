@@ -16,4 +16,4 @@ public:
   ServoMotor();
 };
 
-#endif // SERVO_H_
+#endif // SERVOMOTOR_H_
