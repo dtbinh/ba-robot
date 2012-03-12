@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace TestDLL
 {
     class Program
-    {
+    {        
         static void Main(string[] args)
         {
             // BaRobotLibrary.BaRobot robot = new BaRobotLibrary.BaRobot();
@@ -16,8 +16,10 @@ namespace TestDLL
             BaRobotLibrary.BaRobotWrapper brw = new BaRobotLibrary.BaRobotWrapper();
             brw.SetMode(BaRobotLibrary.TransferMode.USB);
             brw.SetMode(BaRobotLibrary.TransferMode.COM);
-            brw.SetComPort(6);
+            brw.SetComPort(11);
+            string[] STORE = { "00;01;02;03;04;05", "16;17;18;19;20;21" };
 
+            // String test = brw.GetCommand(0);
             while (true)
             {
                 Console.Write("Input : ");
@@ -29,6 +31,9 @@ namespace TestDLL
                         break;
                     case "ON":
                         output = brw.StartCommunication().ToString();
+                        break;
+                    case "STORE":
+                        brw.StoreCommandList(STORE,2);
                         break;
                     case "OFF":
                         output = brw.StopCommunication().ToString();

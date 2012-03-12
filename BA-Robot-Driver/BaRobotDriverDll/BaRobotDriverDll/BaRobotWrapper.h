@@ -24,6 +24,7 @@ namespace BaRobotLibrary
 		bool StartCommunication();
 		bool StopCommunication();
 		String* SendString(String* message);
+		void StoreCommandList(String* commandList[], int count);
 	};
 }
 

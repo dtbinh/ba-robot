@@ -11,7 +11,7 @@
 // for toString()
 #include <sstream>
 // for getting ComPort from USBDevice (BaRobot)
-#include "AddidtionalFunctions.h"
+#include "AdditionalFunctions.h"
 
 using namespace std;
 using namespace BaRobotLibrary;
@@ -20,6 +20,7 @@ BaRobot::BaRobot()
 {
 	comPort = 0;
 	transferMode = TransferMode::COM;
+	servoCount = 5;
 	isValidTransferMode = false;
 	isConnected = false;
 }
@@ -83,7 +84,7 @@ bool BaRobot::StopCommunication()
 char* BaRobot::SendString(char* message)
 {
 	// transfermode == Usb || (transfermode == com and port > 1 && port < 21 )
-	if (isValidTransferMode && strlen(message) < 90 && ( isConnected || (!strcmp(message,"ON")) ))
+	if (isValidTransferMode && strlen(message) < 10000 && ( isConnected || (!strcmp(message,"ON")) ))
 	{
 		if (!isConnected)
 			isConnected = true;
@@ -118,7 +119,7 @@ char* BaRobot::communicateRS232(char* message)
 		cprintf(comPort - 1, newMessage);   							// writes to the serial line (comPort -1) because Com counts from 1
 		char* retBuffer = new char[4096];								// return buffer for reading serial line (what has the device to say?)
 		// memset (retBuffer, '0', 4096);
-		Sleep(250);														// wait for the device to send (from rs232 library where is said minimum 100 ms)
+		Sleep(500);														// wait for the device to send (from rs232 library where is said minimum 100 ms)
 																		// + 100 seems to small for signs up 80
 		counterBytes = PollComport(comPort - 1,(unsigned char*) retBuffer, 4096);   	// read the serial line
 
@@ -161,4 +162,3 @@ BaRobot& BaRobot::operator=(const BaRobot& rhs)
   *this = rhs;
   return *this;
 }
-

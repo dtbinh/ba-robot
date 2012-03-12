@@ -21,4 +21,8 @@ void handleSerialCommands();
 // Substringt den eingelesenen String
 StringArray GetCommandList(String inputstr);
 
+void DebugPrint(String message);
+
+int GetIntFromString(String Value);
+
 #endif // _FUNCTIONS_H

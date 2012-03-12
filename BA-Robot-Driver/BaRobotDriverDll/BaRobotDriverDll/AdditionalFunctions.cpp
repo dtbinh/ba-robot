@@ -1,4 +1,4 @@
-#include "AddidtionalFunctions.h"
+#include "AdditionalFunctions.h"
 
 int GetUsbDeviceComPort(char* DeviceName)
 {
@@ -11,7 +11,6 @@ int GetUsbDeviceComPort(char* DeviceName)
 	// Fill Device List Buffer
     int nResult;
     nResult = GetRawInputDeviceList( pRawInputDeviceList, &nDevices, sizeof( RAWINPUTDEVICELIST ) );
- 
 
 	return nDevices;
 }

@@ -33,7 +33,7 @@
     <ClInclude Include="rs232.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="AddidtionalFunctions.h">
+    <ClInclude Include="AdditionalFunctions.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

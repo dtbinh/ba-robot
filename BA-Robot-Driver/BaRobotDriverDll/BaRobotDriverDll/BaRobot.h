@@ -21,12 +21,15 @@ namespace BaRobotLibrary
 		bool StartCommunication();
 		bool StopCommunication();
 		char* SendString(char* message);
+		void AddCommand(unsigned char command,unsigned char servoFields[]);
+		unsigned char* GetCommand(int index);
 	private:
-		int comPort;
-		int transferMode;
 		bool isValidTransferMode;
 		bool isConnected;
 		char* communicateRS232(char* message);
+		int comPort;
+		int transferMode;
+		int servoCount;
 		string toString();
 	};
 }

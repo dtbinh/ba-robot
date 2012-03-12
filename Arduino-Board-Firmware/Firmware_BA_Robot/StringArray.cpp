@@ -74,3 +74,27 @@ void StringArray::DeleteString(int index)
   }
 }
 
+int StringArray::GetStringAsInt(int index)
+{
+  String tempData = "";
+  if (index >= elements)
+    return 0x00;
+    
+  Liste* tempList = completeListe;
+  for (int i = 0; i  <= index; i++)
+  {
+    if (i == index)
+    {
+      tempData = tempList->data;
+      break;
+    }
+    tempList = tempList->next;
+  }
+  
+  char tempArray[tempData.length() + 1];
+  tempData.toCharArray(tempArray,tempData.length() + 1);
+  tempArray[tempData.length()] = '\0';
+  int tempInt = atoi(tempArray);
+
+  return tempInt;
+}
