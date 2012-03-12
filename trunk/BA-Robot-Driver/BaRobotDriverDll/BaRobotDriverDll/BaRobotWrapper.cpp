@@ -18,15 +18,16 @@ BaRobotWrapper::~BaRobotWrapper()
 
 void BaRobotWrapper::Dispose(bool disposing) 
 { 
-   if (_pBaRobot) 
-   { 
-   delete _pBaRobot; 
-   _pBaRobot = NULL; 
-   } 
-   if (disposing) 
-   { 
-   GC::SuppressFinalize(this); 
-   } 
+    if (_pBaRobot) 
+    { 
+	    _pBaRobot->StopCommunication();
+	    delete _pBaRobot; 
+		_pBaRobot = NULL; 
+    } 
+    if (disposing) 
+    { 
+		GC::SuppressFinalize(this); 
+    } 
 } 
 
 void BaRobotWrapper::Dispose() 
@@ -83,4 +84,44 @@ BaRobotWrapper& BaRobotWrapper::operator=(const BaRobotWrapper& rhs)
 {
     *this = rhs;
     return *this;
+}
+
+void BaRobotWrapper::StoreCommandList(String* commandList[], int count)
+{
+	String* message = "STORE";
+	IntPtr messageBuffer = Marshal::StringToHGlobalAnsi(message);
+	char* pMessage = (char*) messageBuffer.ToPointer();
+	char* pDecoded = _pBaRobot->SendString(pMessage);
+	String* decodedString =	Marshal::PtrToStringAnsi(pDecoded);
+
+	if (! decodedString->Equals("ACK") )
+	{
+		return;
+	}
+
+	message = count.ToString();
+	messageBuffer = Marshal::StringToHGlobalAnsi(message);
+	pMessage = (char*) messageBuffer.ToPointer();
+	pDecoded = _pBaRobot->SendString(pMessage);
+	decodedString =	Marshal::PtrToStringAnsi(pDecoded);
+
+	if (! decodedString->Equals("ACK") )
+	{
+		return;
+	}
+
+	for (int i = 0; i < count; i++)
+	{
+		messageBuffer = Marshal::StringToHGlobalAnsi(commandList[i]);
+		pMessage = (char*) messageBuffer.ToPointer();
+		pDecoded = _pBaRobot->SendString(pMessage);
+		decodedString =	Marshal::PtrToStringAnsi(pDecoded);
+
+		System::Console::WriteLine(decodedString);		
+		// deletion 
+		pDecoded = new char[1];
+		pDecoded[0] = '\0';
+		delete[] pDecoded;
+		Marshal::FreeHGlobal(pMessage);
+	}
 }

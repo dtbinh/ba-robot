@@ -21,6 +21,7 @@ public:
   String GetString(int index);
   void DeleteString(int index);
   int GetElementCount() {return elements;}
+  int GetStringAsInt(int index);
 private:  
   int elements;
   Liste *completeListe;

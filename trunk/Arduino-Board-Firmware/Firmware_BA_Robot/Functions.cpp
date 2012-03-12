@@ -1,4 +1,5 @@
 #include "Functions.h"
+#include "EEPROMHandling.h"
 
 void serialEvent() 
 {
@@ -19,7 +20,11 @@ void serialEvent()
 void handleSerialCommands()
 {
   StringArray commandList = GetCommandList(inputString);
-
+  
+  #ifdef DEBUG
+    Serial1.print("Command was: ");
+    Serial1.println(commandList.GetString(0));
+  #endif 
   if (commandList.GetString(0) == "READ")
   {
     /*
@@ -32,11 +37,9 @@ void handleSerialCommands()
       temp = commandList.GetString(1);
     else
       temp = "0";
-      
-    char tempArray[temp.length() + 1];
-    temp.toCharArray(tempArray,temp.length() + 1);
-    tempArray[temp.length()] = '\0';
-    int test = atoi(tempArray);
+    
+    int test = GetIntFromString(temp);
+    
     byte data = EEPROM.read(test);
     String outputstring = commandList.GetString(0) + ": [" + commandList.GetString(1) + "]: " + String(data,HEX) + "\0";
 
@@ -52,6 +55,10 @@ void handleSerialCommands()
     digitalWrite(13,LOW);
     Serial.print(commandList.GetString(0)); 
   } 
+  else if (commandList.GetString(0) == "STORE")
+  {
+    SaveToEEPROM();
+  }
   else
   {
     for (int i = 0; i < commandList.GetElementCount(); i++)
@@ -85,4 +92,20 @@ StringArray GetCommandList(String inputstr)
   }
   return retVal;
 }
+
+void DebugPrint(String message)
+{
+  #ifdef DEBUG
+    Serial1.println(message);
+  #endif  
+}
+
+int GetIntFromString(String Value)
+{ 
+  char tempArray[Value.length() + 1];
+  Value.toCharArray(tempArray,Value.length() + 1);
+  tempArray[Value.length()] = '\0';
+  return atoi(tempArray);
+}
+
 

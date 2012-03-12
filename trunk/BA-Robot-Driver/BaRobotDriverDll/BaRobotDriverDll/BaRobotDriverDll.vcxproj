@@ -68,7 +68,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AddidtionalFunctions.h" />
+    <ClInclude Include="AdditionalFunctions.h" />
     <ClInclude Include="BaRobot.h" />
     <ClInclude Include="BaRobotWrapper.h" />
     <ClInclude Include="resource.h" />
