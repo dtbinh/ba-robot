@@ -10,6 +10,8 @@
 #include <windows.h>
 // for toString()
 #include <sstream>
+// for getting ComPort from USBDevice (BaRobot)
+#include "AddidtionalFunctions.h"
 
 using namespace std;
 using namespace BaRobotLibrary;
@@ -27,7 +29,11 @@ void BaRobot::SetMode(int tm)
 	transferMode = tm;
 	
 	if (tm == TransferMode::USB)
+	{
+		int test = GetUsbDeviceComPort("Ba-Robot"); // TODO: hier Comport von USB auslesen
+		comPort = test;
 		isValidTransferMode = true;
+	}
 	else
 	{
 		comPort = 0;

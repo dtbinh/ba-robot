@@ -33,6 +33,9 @@
     <ClInclude Include="rs232.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="AddidtionalFunctions.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Stdafx.cpp">
@@ -45,6 +48,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="rs232.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="AdditionalFunctions.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

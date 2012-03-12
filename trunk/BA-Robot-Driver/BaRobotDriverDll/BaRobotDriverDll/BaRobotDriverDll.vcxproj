@@ -68,6 +68,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AddidtionalFunctions.h" />
     <ClInclude Include="BaRobot.h" />
     <ClInclude Include="BaRobotWrapper.h" />
     <ClInclude Include="resource.h" />
@@ -76,6 +77,7 @@
     <ClInclude Include="TransferMode.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AdditionalFunctions.cpp" />
     <ClCompile Include="BaRobot.cpp" />
     <ClCompile Include="BaRobotWrapper.cpp" />
     <ClCompile Include="rs232.cpp" />
