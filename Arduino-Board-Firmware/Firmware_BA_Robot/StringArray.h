@@ -31,6 +31,3 @@ private:
 };
 
 #endif // _STRINGARRAY_H
-
-
-
