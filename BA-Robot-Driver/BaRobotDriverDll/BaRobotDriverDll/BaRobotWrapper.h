@@ -11,7 +11,7 @@ namespace BaRobotLibrary
 	{
 	private:
 		BaRobot __nogc* _pBaRobot;
-
+		String* GetAndSendMessageWrapper(String* message);
 	public:
 		BaRobotWrapper();
 		BaRobotWrapper(const BaRobotWrapper& obj);
@@ -24,7 +24,10 @@ namespace BaRobotLibrary
 		bool StartCommunication();
 		bool StopCommunication();
 		String* SendString(String* message);
-		void StoreCommandList(String* commandList[], int count);
+		String* StoreCommandList(String* commandList[], int count);
+		String* GetCommandList();
+		String* EraseCommandList();
+		String* ToString();
 	};
 }
 

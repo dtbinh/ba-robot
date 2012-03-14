@@ -2,9 +2,9 @@
 #define _STRINGARRAY_H
 
 #if defined(ARDUINO) && ARDUINO >= 100
-  #include "Arduino.h"
+#include "Arduino.h"
 #else
-  #include "WProgram.h"
+#include "WProgram.h"
 #endif
 
 struct Liste
@@ -20,7 +20,9 @@ public:
   void AddString(String string);
   String GetString(int index);
   void DeleteString(int index);
-  int GetElementCount() {return elements;}
+  int GetElementCount() {
+    return elements;
+  }
   int GetStringAsInt(int index);
 private:  
   int elements;
@@ -29,4 +31,6 @@ private:
 };
 
 #endif // _STRINGARRAY_H
+
+
 

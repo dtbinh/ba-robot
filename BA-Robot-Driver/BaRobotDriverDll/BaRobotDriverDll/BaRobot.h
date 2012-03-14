@@ -10,7 +10,7 @@ namespace BaRobotLibrary
 {
 	__nogc
 
-	public class BaRobot
+	private class BaRobot
 	{
 	public:
 		BaRobot();
@@ -23,6 +23,7 @@ namespace BaRobotLibrary
 		char* SendString(char* message);
 		void AddCommand(unsigned char command,unsigned char servoFields[]);
 		unsigned char* GetCommand(int index);
+		string ToString();
 	private:
 		bool isValidTransferMode;
 		bool isConnected;
@@ -30,7 +31,6 @@ namespace BaRobotLibrary
 		int comPort;
 		int transferMode;
 		int servoCount;
-		string toString();
 	};
 }
 #endif // _BAROBOT_H

@@ -2,19 +2,18 @@
 #include <EEPROM.h>
 #include "Functions.h"
 
+#define DEBUG
+
 String inputString = "";
 boolean stringComplete = false;
 
 // Initializing Routine
 void setup() {      
-  for (int i = 0; i < 20; i++)
-    EEPROM.write(i,0x00);
-
   Serial.begin(9600);
-  #ifdef DEBUG
-    Serial1.begin(9600);
-  #endif
-  inputString.reserve(10000);
+#ifdef DEBUG
+  Serial1.begin(9600);
+#endif
+  inputString.reserve(200);
   pinMode(13, OUTPUT);
 }
 
@@ -30,7 +29,9 @@ void loop() {
     }
     else
     {
+      DebugPrint("Complete String received");
       handleSerialCommands();
+      ResetMessage();
     }
   }
 }
