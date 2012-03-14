@@ -98,5 +98,3 @@ int StringArray::GetStringAsInt(int index)
 
   return tempInt;
 }
-
-

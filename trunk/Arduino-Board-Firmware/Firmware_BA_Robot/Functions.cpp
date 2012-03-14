@@ -1,5 +1,4 @@
 #include "Functions.h"
-#include "EEPROMHandling.h"
 
 void serialEvent() 
 {
@@ -20,54 +19,54 @@ void serialEvent()
 void handleSerialCommands()
 {
   StringArray commandList = GetCommandList(inputString);
+  String command = commandList.GetString(0);
 
   DebugPrint("Command was: ");
-  DebugPrint(commandList.GetString(0));
+  DebugPrint(command);
 
+  // RobotControl
   // Switch Robot On
-  if (commandList.GetString(0) == "ON")
+  if (command == "ON")
   {
     digitalWrite(13,HIGH);
-    Serial.print(commandList.GetString(0)); 
+    Serial.print(command); 
   }
   // Switch Robot Off
-  else if (commandList.GetString(0) == "OFF")
+  else if (command == "OFF")
   {
     digitalWrite(13,LOW);
-    Serial.print(commandList.GetString(0)); 
+    Serial.print(command); 
   } 
+  // EEPROM Handling
   // Store Movement List
-  else if (commandList.GetString(0) == "STORE")
+  else if (command == "STORE")
   {
     SaveToEEPROM();
   }
   // Retrieve Movement List  
-  else if (commandList.GetString(0) == "GET")
+  else if (command == "GET")
   {
     // Serial.print("get");
     LoadFromEEPROM();
   }
   // Erase Movement List
-  else if (commandList.GetString(0) == "ERASE")
+  else if (command == "ERASE")
   {
     ClearEEPROM();
   }  
   // READ Specified EEPROM Address
-  else if (commandList.GetString(0) == "READ")
+  else if (command == "READ")
   {
-    String temp = "";
-    if (commandList.GetElementCount() > 1)
-      temp = commandList.GetString(1);
-    else
-      temp = "0";
-
-    int test = GetIntFromString(temp);
-
-    byte data = EEPROM.read(test);
-    String outputstring = commandList.GetString(0) + ": [" + commandList.GetString(1) + "]: " + String(data,HEX) + "\0";
-
-    Serial.print(outputstring);    
+    handleReadCommand(commandList);
   } 
+  // Servohandling
+  else if (command == "MOVE")
+  {
+    if (commandList.GetElementCount() >= 4)
+      Move_Servo(commandList);
+    else
+      Serial.print("Error: not enough Arguments, Example MOVE;SERVONUMBER;SPEED;VALUE");
+  }
   // Other Command
   else
   {
@@ -131,4 +130,18 @@ void ResetMessage()
   inputString = "";
 }
 
+void handleReadCommand(StringArray commandList)
+{
+  String temp = "";
+  if (commandList.GetElementCount() > 1)
+    temp = commandList.GetString(1);
+  else
+    temp = "0";
 
+  int test = GetIntFromString(temp);
+
+  byte data = EEPROM.read(test);
+  String outputstring = commandList.GetString(1) + ": [" + commandList.GetString(1) + "]: " + String(data,HEX) + "\0";
+
+  Serial.print(outputstring);   
+}

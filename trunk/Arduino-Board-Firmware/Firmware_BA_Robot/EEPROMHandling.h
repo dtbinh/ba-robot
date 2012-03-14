@@ -22,5 +22,3 @@ void LoadFromEEPROM();
 void ClearEEPROM();
 
 #endif // _EEPROMHANDLING_H
-
-

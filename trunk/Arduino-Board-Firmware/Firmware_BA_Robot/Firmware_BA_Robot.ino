@@ -1,6 +1,8 @@
-
+// Arduino Libraries must be included here first
 #include <EEPROM.h>
+#include <Servo.h>
 #include "Functions.h"
+#include "ServoHandling.h"
 
 #define DEBUG
 
@@ -9,17 +11,17 @@ boolean stringComplete = false;
 
 // Initializing Routine
 void setup() {      
-  Serial.begin(9600);
 #ifdef DEBUG
   Serial1.begin(9600);
 #endif
-  inputString.reserve(200);
+  Serial.begin(9600);
   pinMode(13, OUTPUT);
+  Servos_Init();
+  inputString.reserve(200);
 }
 
 // Main Loop
 void loop() {
-
   // wenn String eingelesen dann abhandeln
   if (stringComplete) 
   {
@@ -35,4 +37,3 @@ void loop() {
     }
   }
 }
-
