@@ -119,7 +119,7 @@ char* BaRobot::communicateRS232(char* message)
 		cprintf(comPort - 1, newMessage);   							// writes to the serial line (comPort -1) because Com counts from 1
 		char* retBuffer = new char[4096];								// return buffer for reading serial line (what has the device to say?)
 		// memset (retBuffer, '0', 4096);
-		Sleep(500);														// wait for the device to send (from rs232 library where is said minimum 100 ms)
+		Sleep(250);														// wait for the device to send (from rs232 library where is said minimum 100 ms)
 																		// + 100 seems to small for signs up 80
 		counterBytes = PollComport(comPort - 1,(unsigned char*) retBuffer, 4096);   	// read the serial line
 
@@ -140,12 +140,20 @@ char* BaRobot::communicateRS232(char* message)
 	return "Error opening the serial line...";
 }
 
-string BaRobot::toString()
+string BaRobot::ToString()
 {
 	stringstream stream;
-	stream << "BaRobot: Communication: ";
+	stream << "BaRobot:\nCommunication: ";
 	if (transferMode == TransferMode::COM)
+	{
 		stream << "COM\n";
+		stream << "PORT: " << comPort << "\n";
+		stream << "Connected: ";
+		if (isConnected)
+			stream << "yes\n";
+		else
+			stream << "no\n";
+	}
 	else
 		stream << "USB\n";
 

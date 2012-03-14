@@ -1,5 +1,7 @@
 #include "stdafx.h" 
 #include <stdio.h> 
+#include <string>
+#include <windows.h>
 #include "BaRobot.h" 
 #include "BaRobotWrapper.h" 
 
@@ -57,21 +59,7 @@ bool BaRobotWrapper::StopCommunication()
 
 String* BaRobotWrapper::SendString(String* message)
 {
-	IntPtr messageBuffer = Marshal::StringToHGlobalAnsi(message);
-
-	char* pMessage = (char*) messageBuffer.ToPointer();
-
-	char* pDecoded = _pBaRobot->SendString(pMessage);
-
-	String* decodedString =	Marshal::PtrToStringAnsi(pDecoded);
-	
-	pDecoded = new char[1];
-	pDecoded[0] = '\0';
-	delete[] pDecoded;
-
-	Marshal::FreeHGlobal(pMessage);
-
-	return decodedString;
+	return GetAndSendMessageWrapper(message);
 }
 
 BaRobotWrapper::BaRobotWrapper(const BaRobotWrapper& obj)
@@ -86,42 +74,137 @@ BaRobotWrapper& BaRobotWrapper::operator=(const BaRobotWrapper& rhs)
     return *this;
 }
 
-void BaRobotWrapper::StoreCommandList(String* commandList[], int count)
+String* BaRobotWrapper::StoreCommandList(String* commandList[], int count)
 {
 	String* message = "STORE";
-	IntPtr messageBuffer = Marshal::StringToHGlobalAnsi(message);
-	char* pMessage = (char*) messageBuffer.ToPointer();
-	char* pDecoded = _pBaRobot->SendString(pMessage);
-	String* decodedString =	Marshal::PtrToStringAnsi(pDecoded);
+	String* decodedString = GetAndSendMessageWrapper(message);
 
 	if (! decodedString->Equals("ACK") )
 	{
-		return;
+		return decodedString;
 	}
 
 	message = count.ToString();
-	messageBuffer = Marshal::StringToHGlobalAnsi(message);
-	pMessage = (char*) messageBuffer.ToPointer();
-	pDecoded = _pBaRobot->SendString(pMessage);
-	decodedString =	Marshal::PtrToStringAnsi(pDecoded);
+	decodedString = GetAndSendMessageWrapper(message);
 
 	if (! decodedString->Equals("ACK") )
 	{
-		return;
+		return decodedString;
 	}
 
 	for (int i = 0; i < count; i++)
 	{
-		messageBuffer = Marshal::StringToHGlobalAnsi(commandList[i]);
-		pMessage = (char*) messageBuffer.ToPointer();
-		pDecoded = _pBaRobot->SendString(pMessage);
-		decodedString =	Marshal::PtrToStringAnsi(pDecoded);
-
-		System::Console::WriteLine(decodedString);		
-		// deletion 
-		pDecoded = new char[1];
-		pDecoded[0] = '\0';
-		delete[] pDecoded;
-		Marshal::FreeHGlobal(pMessage);
+		decodedString = GetAndSendMessageWrapper(commandList[i]);
 	}
+	return "Finished Saving...";
+}
+
+#pragma warning( disable : 4101 )
+String* BaRobotWrapper::GetCommandList()
+{
+	String* message = "GET";
+	String* decodedString = GetAndSendMessageWrapper(message);
+	// String** retVal = new String*[numberCommands];
+
+	/*
+	IntPtr messageBuffer = Marshal::StringToHGlobalAnsi(message);
+	char* pMessage = (char*) messageBuffer.ToPointer();
+	char* pDecoded = _pBaRobot->SendString(pMessage);
+	String* decodedString =	Marshal::PtrToStringAnsi(pDecoded);
+	*/
+	
+	String* retVal = "";
+
+	int numberCommands = 0;
+	int numberServos = 0;
+	int speed = 0;
+
+	try
+	{
+		numberCommands = System::Int32::Parse(decodedString);	
+	}
+	/*
+	catch (FormatException *e)
+	{
+		return decodedString;
+	}
+	*/
+	catch (Exception *e)
+	{
+		return decodedString;
+	}
+	if (numberCommands <= 0)
+	{
+		return "Nothing Stored";
+	}
+
+	// Numbercommands@
+	retVal = String::Concat(retVal, decodedString );
+	retVal = String::Concat(retVal, "@" );
+	// retVal += decodedString + "@";
+
+	// Send ACK
+	message = "ACK";
+
+	decodedString = GetAndSendMessageWrapper(message);
+	// Numbercommands@Anzahl Servos@
+	retVal = String::Concat(retVal, decodedString );
+	retVal = String::Concat(retVal, "@" );
+
+	decodedString = GetAndSendMessageWrapper(message);
+	// Numbercommands@Anzahl Servos@Speed@
+	retVal = String::Concat(retVal, decodedString );
+	retVal = String::Concat(retVal, "@" );
+
+	for (int i = 0; i < numberCommands; i++)
+	{
+		decodedString = GetAndSendMessageWrapper(message);
+		// Numbercommands@Anzahl Servos@Speed@command1@command2...
+		retVal = String::Concat(retVal, decodedString );
+		retVal = String::Concat(retVal, "@" );
+	}
+
+	// Numbercommands@Anzahl Servos@Speed@command1@command2...@FINISHED
+	decodedString = GetAndSendMessageWrapper(message);
+	retVal = String::Concat(retVal, decodedString );
+	retVal = String::Concat(retVal, "@" );
+	return retVal;
+}
+
+String* BaRobotWrapper::GetAndSendMessageWrapper(String* message)
+{
+	IntPtr messageBuffer = Marshal::StringToHGlobalAnsi(message);
+	char* pMessage = (char*) messageBuffer.ToPointer();
+	char* pDecoded = _pBaRobot->SendString(pMessage);
+	String* decodedString =	Marshal::PtrToStringAnsi(pDecoded);
+    // deletion 
+	pDecoded = new char[1];
+	pDecoded[0] = '\0';
+	delete[] pDecoded;
+	Marshal::FreeHGlobal(pMessage);
+
+	return decodedString;
+}
+
+String* BaRobotWrapper::EraseCommandList()
+{
+	String* message = "ERASE";
+	String* retVal = "";
+	String* decodedString = GetAndSendMessageWrapper(message);
+	retVal = String::Concat(retVal, decodedString );
+	retVal = String::Concat(retVal, "\n" );
+	// hier Sleep, da EEPROM Erasing etwas dauert... (3.3 ms pro byte * 4096 byte)
+	// ungefähr 13,52 Sekunden -> 15s
+	Sleep(15000);
+	message = "ACK";
+	decodedString = GetAndSendMessageWrapper(message);	
+	retVal = String::Concat(retVal, decodedString );
+	return retVal;
+}
+
+String* BaRobotWrapper::ToString()
+{
+	std::string tempString = _pBaRobot->ToString();
+	String* retVal = new System::String(tempString.c_str());
+	return retVal;
 }

@@ -11,9 +11,11 @@ private:
   int newValue;
   volatile int speedCounter;
   ServoConfig configuration;
-  
+
 public:
   ServoMotor();
 };
 
 #endif // SERVOMOTOR_H_
+
+
