@@ -62,10 +62,39 @@ void handleSerialCommands()
   // Servohandling
   else if (command == "MOVE")
   {
-    if (commandList.GetElementCount() >= 4)
-      Move_Servo(commandList);
+    int oldValue = servo.read();
+    int newValue = GetIntFromString(commandList.GetString(1));
+    
+    if (oldValue <= newValue)
+    {
+      for (int i = oldValue; i <= newValue; i++)
+      {
+        servo.write(i);
+        delay(10 * (5 - GLOBAL_SERVO_SPEED));
+      }
+    }
     else
-      Serial.print("Error: not enough Arguments, Example MOVE;SERVONUMBER;SPEED;VALUE");
+    {
+      for (int i = oldValue; i >= newValue; i--)
+      {
+        servo.write(i);
+        delay(10 * (5 - GLOBAL_SERVO_SPEED));
+      }
+    }
+    DebugPrint(String("Wrote to Servo: " + commandList.GetString(1)));
+    /*
+    if (commandList.GetElementCount() >= 4)
+     Move_Servo(commandList);
+     else
+     Serial.print("Error: not enough Arguments, Example MOVE;SERVONUMBER;SPEED;VALUE");
+     */
+  }
+  // Set Speed
+  else if (command == "SPEED")
+  {
+    int newSpeed = GetIntFromString(commandList.GetString(1));
+    if (newSpeed >= 0 && newSpeed <= 5)
+      GLOBAL_SERVO_SPEED = newSpeed;
   }
   // Other Command
   else
@@ -102,9 +131,10 @@ StringArray GetCommandList(String inputstr)
 
 void DebugPrint(String message)
 {
-#ifdef DEBUG
-  Serial1.println(message);
-#endif  
+#ifdef BA_ROBOT
+  Serial1.println("### " + message);
+  // Serial.println("### " + message);
+#endif
 }
 
 int GetIntFromString(String Value)
@@ -145,3 +175,6 @@ void handleReadCommand(StringArray commandList)
 
   Serial.print(outputstring);   
 }
+
+
+

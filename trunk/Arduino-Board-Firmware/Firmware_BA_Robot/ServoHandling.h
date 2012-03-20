@@ -1,9 +1,7 @@
 #ifndef _SERVOHANDLING_H
 #define _SERVOHANDLING_H
 
-#include <Servo.h>
-#include "StringArray.h"
-#include "Functions.h"
+#include "Constants.h"
 
 #define SERVOCOUNT  5
 #define SERVOSTARTSPEED  127
