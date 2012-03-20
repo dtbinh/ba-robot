@@ -23,7 +23,7 @@ namespace TestDLL
             BaRobotLibrary.BaRobotWrapper brw = new BaRobotLibrary.BaRobotWrapper();
             brw.SetMode(BaRobotLibrary.TransferMode.USB);
             brw.SetMode(BaRobotLibrary.TransferMode.COM);
-            brw.SetComPort(7);
+            brw.SetComPort(6);
             string temp2= brw.ToString();
             string[] STORE = { "00;01;02;03;04;05", "16;17;18;19;20;21" };
 
