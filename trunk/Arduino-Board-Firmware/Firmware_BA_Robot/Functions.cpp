@@ -6,36 +6,36 @@ void serialEvent()
   {
     char inChar = (char)Serial.read(); 
     if (inChar == '\n' || inChar == '\r') {
-      stringComplete = true;
-      inputString += '\0';
+      IS_INPUT_STRING_COMPLETE = true;
+      INPUT_STRING += '\0';
     }
     else
     { 
-      inputString += inChar;
+      INPUT_STRING += inChar;
     } 
   }
 }
 
 void handleSerialCommands()
 {
-  StringArray commandList = GetCommandList(inputString);
+  DebugPrint("Function handleSerialCommands");
+  StringArray commandList = GetCommandList(INPUT_STRING);
   String command = commandList.GetString(0);
 
-  DebugPrint("Command was: ");
-  DebugPrint(command);
+  DebugPrint("Command was: " + command);
 
   // RobotControl
   // Switch Robot On
   if (command == "ON")
   {
     digitalWrite(13,HIGH);
-    Serial.print(command); 
+    PrintMessage(command); 
   }
   // Switch Robot Off
   else if (command == "OFF")
   {
     digitalWrite(13,LOW);
-    Serial.print(command); 
+    PrintMessage(command); 
   } 
   // EEPROM Handling
   // Store Movement List
@@ -46,7 +46,7 @@ void handleSerialCommands()
   // Retrieve Movement List  
   else if (command == "GET")
   {
-    // Serial.print("get");
+    // PrintMessage("get");
     LoadFromEEPROM();
   }
   // Erase Movement List
@@ -60,33 +60,37 @@ void handleSerialCommands()
     handleReadCommand(commandList);
   } 
   // Servohandling
+  // Move Servo
   else if (command == "MOVE")
   {
+    Move_Servo(commandList);
+    DebugPrint(String("Wrote to Servo: #" + commandList.GetString(1) + " Value: " + commandList.GetString(2)));
+    /*
     int oldValue = servo.read();
-    int newValue = GetIntFromString(commandList.GetString(1));
-    
-    if (oldValue <= newValue)
-    {
-      for (int i = oldValue; i <= newValue; i++)
-      {
-        servo.write(i);
-        delay(10 * (5 - GLOBAL_SERVO_SPEED));
-      }
-    }
-    else
-    {
-      for (int i = oldValue; i >= newValue; i--)
-      {
-        servo.write(i);
-        delay(10 * (5 - GLOBAL_SERVO_SPEED));
-      }
-    }
-    DebugPrint(String("Wrote to Servo: " + commandList.GetString(1)));
+     int newValue = GetIntFromString(commandList.GetString(1));
+     
+     if (oldValue <= newValue)
+     {
+     for (int i = oldValue; i <= newValue; i++)
+     {
+     servo.write(i);
+     delay(10 * (5 - GLOBAL_SERVO_SPEED));
+     }
+     }
+     else
+     {
+     for (int i = oldValue; i >= newValue; i--)
+     {
+     servo.write(i);
+     delay(10 * (5 - GLOBAL_SERVO_SPEED));
+     }
+     }
+     */
     /*
     if (commandList.GetElementCount() >= 4)
      Move_Servo(commandList);
      else
-     Serial.print("Error: not enough Arguments, Example MOVE;SERVONUMBER;SPEED;VALUE");
+     PrintMessage("Error: not enough Arguments, Example MOVE;SERVONUMBER;SPEED;VALUE");
      */
   }
   // Set Speed
@@ -94,15 +98,19 @@ void handleSerialCommands()
   {
     int newSpeed = GetIntFromString(commandList.GetString(1));
     if (newSpeed >= 0 && newSpeed <= 5)
+    {
+      DebugPrint("GLOBAL_SERVO_SPEED  set to: " + GLOBAL_SERVO_SPEED);
       GLOBAL_SERVO_SPEED = newSpeed;
+    }
   }
   // Other Command
   else
   {
+    DebugPrint("Unknown Command");
     for (int i = 0; i < commandList.GetElementCount(); i++)
     {
-      Serial.print(commandList.GetString(i));
-      Serial.print("|");
+      PrintMessage(commandList.GetString(i));
+      PrintMessage("|");
     }
   }
 }
@@ -128,13 +136,31 @@ StringArray GetCommandList(String inputstr)
   }
   return retVal;
 }
+void PrintMessage(String message)
+{
+  Serial.flush();
+  message += "\0";
+  Serial.print(message);
+}
+
+void PrintMessage(int message)
+{
+  String msg = String(message);
+  msg += "\0";
+  Serial.flush();
+  Serial.print(msg);
+}
 
 void DebugPrint(String message)
 {
-#ifdef BA_ROBOT
-  Serial1.println("### " + message);
+// #ifdef BA_ROBOT
+  if (GLOBAL_BA_ROBOT_DEBUG)
+  {
+    Serial1.println("### " + message);
+    Serial1.flush();
+  }
   // Serial.println("### " + message);
-#endif
+// #endif
 }
 
 int GetIntFromString(String Value)
@@ -147,7 +173,8 @@ int GetIntFromString(String Value)
 
 void WaitForMessage()
 {
-  while (! stringComplete)
+  DebugPrint("Waiting for Message...");
+  while (! IS_INPUT_STRING_COMPLETE)
   {    
     serialEvent();
   }
@@ -155,13 +182,14 @@ void WaitForMessage()
 
 void ResetMessage()
 {
-  DebugPrint("Resetting InputString"); 
-  stringComplete = false;
-  inputString = "";
+  DebugPrint("Resetting INPUT_STRING"); 
+  IS_INPUT_STRING_COMPLETE = false;
+  INPUT_STRING = "";
 }
 
 void handleReadCommand(StringArray commandList)
 {
+  DebugPrint("Function handleReadCommand"); 
   String temp = "";
   if (commandList.GetElementCount() > 1)
     temp = commandList.GetString(1);
@@ -173,8 +201,9 @@ void handleReadCommand(StringArray commandList)
   byte data = EEPROM.read(test);
   String outputstring = commandList.GetString(1) + ": [" + commandList.GetString(1) + "]: " + String(data,HEX) + "\0";
 
-  Serial.print(outputstring);   
+  PrintMessage(outputstring);   
 }
+
 
 
 

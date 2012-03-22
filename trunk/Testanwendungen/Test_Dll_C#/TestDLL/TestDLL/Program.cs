@@ -23,7 +23,7 @@ namespace TestDLL
             BaRobotLibrary.BaRobotWrapper brw = new BaRobotLibrary.BaRobotWrapper();
             brw.SetMode(BaRobotLibrary.TransferMode.USB);
             brw.SetMode(BaRobotLibrary.TransferMode.COM);
-            brw.SetComPort(6);
+            brw.SetComPort(7);
             string temp2= brw.ToString();
             string[] STORE = { "00;01;02;03;04;05", "16;17;18;19;20;21" };
 
@@ -36,6 +36,7 @@ namespace TestDLL
                 Console.Write("Input : ");
                 String temp = Console.ReadLine();
                 String output = String.Empty;
+                DateTime start = DateTime.Now;
                 switch (temp)
                 {
                     case "exit":
@@ -62,8 +63,12 @@ namespace TestDLL
                 temp2 = brw.ToString();
                 if (temp == "exit")
                     break;
-               
+
+                Console.WriteLine("Start: " + start);
                 Console.WriteLine("Output: " + output);
+                Console.WriteLine("Duration: " + (DateTime.Now - start));
+                Console.WriteLine("End: " + DateTime.Now);
+
 #if DEBUG
                 Console.Write(temp2);
 #endif

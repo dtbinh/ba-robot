@@ -12,15 +12,15 @@ String GetCommandAt(int index);
 boolean SaveToEEPROM()
 {
   DebugPrint("Function SaveToEEPROM");
-  Serial.print("ACK");
-  
+  PrintMessage("ACK");
+
   ResetMessage();
   WaitForMessage();
-  DebugPrint("Input came: " + stringComplete);
+  DebugPrint("Input came: " + INPUT_STRING);
 
-  Serial.print("ACK");
+  PrintMessage("ACK");
 
-  int  numberCommands = GetIntFromString(inputString);
+  int  numberCommands = GetIntFromString(INPUT_STRING);
 
   if (numberCommands <= 0)
   {
@@ -35,8 +35,8 @@ boolean SaveToEEPROM()
   {
     ResetMessage();
     WaitForMessage();
-    DebugPrint("Input came: " + stringComplete);
-    StringArray temp = GetCommandList(inputString);
+    DebugPrint("Input came: " + INPUT_STRING);
+    StringArray temp = GetCommandList(INPUT_STRING);
     SaveCommands(i,temp);
   }
   return true;
@@ -44,13 +44,14 @@ boolean SaveToEEPROM()
 
 void LoadFromEEPROM()
 {
+  // muss als erstes stehen, da ein eeprom read etwas dauert und ansonsten ein timeout erreicht wird
+  // Send Anzahl Befehle
+  int numberCommands = GetAnzahlBefehle();
+  PrintMessage(numberCommands);
+  
   DebugPrint("Function LoadFromEEPROM");
   String comparer = String("ACK");
 
-  // Send Anzahl Befehle
-  int numberCommands = GetAnzahlBefehle();
-
-  Serial.print(numberCommands);
   if (numberCommands == 0)
   {
     return;
@@ -58,33 +59,33 @@ void LoadFromEEPROM()
 
   ResetMessage();
   WaitForMessage();
-  DebugPrint("Input came: " + stringComplete);  
+  DebugPrint("Input came: " + INPUT_STRING);  
   // ACK ?
-  if (comparer.compareTo(inputString) != 0)
+  if (comparer.compareTo(INPUT_STRING) != 0)
   {
     return;
   }
 
   // Send Anzahl Servos
-  Serial.print(GetAnzahlServos());
+  PrintMessage(GetAnzahlServos());
   ResetMessage();
   WaitForMessage();
 
-  DebugPrint("Input came: " + stringComplete); 
+  DebugPrint("Input came: " + INPUT_STRING); 
   // ACK ?
-  if (comparer.compareTo(inputString) != 0)
+  if (comparer.compareTo(INPUT_STRING) != 0)
   {
     return;
   }
 
   // Send Speed
-  Serial.print(GetSpeed());
+  PrintMessage(GetSpeed());
   ResetMessage();
   WaitForMessage();
 
-  DebugPrint("Input came: " + stringComplete); 
+  DebugPrint("Input came: " + INPUT_STRING); 
   // ACK ?
-  if (comparer.compareTo(inputString) != 0)
+  if (comparer.compareTo(INPUT_STRING) != 0)
   {
     return;
   }
@@ -92,30 +93,30 @@ void LoadFromEEPROM()
   for (int i = 0; i < numberCommands; i++)
   {
     String temp = GetCommandAt(i);  
-    Serial.print(temp);
+    PrintMessage(temp);
     ResetMessage();
     WaitForMessage();
-    DebugPrint("Input came: " + stringComplete); 
+    DebugPrint("Input came: " + INPUT_STRING); 
   }
 
-  if (comparer.compareTo(inputString) == 0)
-    Serial.print("FINISHED");
+  if (comparer.compareTo(INPUT_STRING) == 0)
+    PrintMessage("FINISHED");
   else
-    Serial.print("ERROR");
+    PrintMessage("ERROR");
 }
 
 void ClearEEPROM()
 {
   DebugPrint("Function ClearEEPROM"); 
-  Serial.print("\nTrying erase EEPROM...");
+  PrintMessage("\nTrying erase EEPROM...");
   for (int i = 0; i < 4096; i++)
   {
     EEPROM.write(i,0x00);
   }
   ResetMessage();
   WaitForMessage();  
-  DebugPrint("Input came: " + stringComplete); 
-  Serial.print("Erasing EEPROM done...");
+  DebugPrint("Input came: " + INPUT_STRING); 
+  PrintMessage("Erasing EEPROM done...");
 }
 
 void SaveAnzahlBefehle(int numberCommands)
@@ -183,3 +184,4 @@ String GetCommandAt(int index)
 
   return retVal;
 }
+

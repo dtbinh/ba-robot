@@ -302,7 +302,7 @@ int OpenComport(int comport_number, int baudrate)
   COMMTIMEOUTS Cptimeouts;
 
   Cptimeouts.ReadIntervalTimeout         = MAXDWORD;
-  Cptimeouts.ReadTotalTimeoutMultiplier  = 0;
+  Cptimeouts.ReadTotalTimeoutMultiplier  = 1;
   Cptimeouts.ReadTotalTimeoutConstant    = 0;
   Cptimeouts.WriteTotalTimeoutMultiplier = 0;
   Cptimeouts.WriteTotalTimeoutConstant   = 0;
