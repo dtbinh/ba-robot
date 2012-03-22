@@ -9,6 +9,9 @@ void serialEvent();
 void handleSerialCommands();
 // Debug Printing on Serial1
 void DebugPrint(String message);
+// Normal Printing on Serial
+void PrintMessage(String message);
+void PrintMessage(int message);
 // führt das SerialEvent innerhalb des Loops durch //TODO: hier Timer setzen
 void WaitForMessage();
 // Resetet den Input von Serial

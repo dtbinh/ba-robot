@@ -18,10 +18,11 @@
 #include "EEPROMHandling.h"
 #include "ServoHandling.h"
 
-extern String inputString;
-extern boolean stringComplete;
-extern Servo servo;
+extern String INPUT_STRING;
+extern boolean IS_INPUT_STRING_COMPLETE;
 extern int GLOBAL_SERVO_SPEED;
+extern boolean GLOBAL_BA_ROBOT_DEBUG;
+// extern Servo servo;
 
 #endif // _CONSTANTS_H
 

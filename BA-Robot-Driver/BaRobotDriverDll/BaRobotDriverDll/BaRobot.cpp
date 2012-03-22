@@ -117,14 +117,17 @@ char* BaRobot::communicateRS232(char* message)
 	if (!notOkay)														// ugly to say if not not okay but the rs232 library give the returncodes that way
 	{
 		cprintf(comPort - 1, newMessage);   							// writes to the serial line (comPort -1) because Com counts from 1
-		char* retBuffer = new char[4096];								// return buffer for reading serial line (what has the device to say?)
+		
+		// char* retBuffer = new char[4096];								// return buffer for reading serial line (what has the device to say?)
+		char* retBuffer = new char[512];								// return buffer for reading serial line (what has the device to say?)
 		// memset (retBuffer, '0', 4096);
-		Sleep(250);														// wait for the device to send (from rs232 library where is said minimum 100 ms)
+		Sleep(150);														// wait for the device to send (from rs232 library where is said minimum 100 ms)
 																		// + 100 seems to small for signs up 80
-		counterBytes = PollComport(comPort - 1,(unsigned char*) retBuffer, 4096);   	// read the serial line
+		counterBytes = PollComport(comPort - 1,(unsigned char*) retBuffer, 512);   	// read the serial line
 
 		CloseComport(comPort - 1);										// very important to close the serial connection
 
+		// return retBuffer;
 		// hier umkopieren, weil bei manchen Übertragungen zuviele Zeichen von PollComport gelesen oder gesetzt werden.
 		char* buffer = new char[counterBytes + 1];
 		for (int i = 0; i < counterBytes; i++)
