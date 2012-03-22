@@ -16,26 +16,22 @@ void Move_Servo(StringArray commandList)
 {
   DebugPrint("Function Move_Servo(StringArray)");
   String retVal = commandList.GetString(0);
-  int servo = 0;
-  int value = 0;
+  int servo = -1;
+  int value = -1;
 
   if (GetIntFromString(commandList.GetString(1)) != -1)
     servo = GetIntFromString(commandList.GetString(1));
   if (GetIntFromString(commandList.GetString(2)) != -1)
     value = GetIntFromString(commandList.GetString(2));
 
-  if (servo >= 0 && servo < SERVOCOUNT && value != 0)
+  if (servo >= 0 && servo < SERVOCOUNT && value >= 0)
   {
     DebugPrint("Servomovement: OKAY");
     Move_Servo(servo, value);
   }
   else
   {
-    DebugPrint("Servomovement: ERROR|");
-    DebugPrint(String(servo));
-    DebugPrint("|");
-    DebugPrint(String(value));
-    DebugPrint("|");
+    DebugPrint("Servomovement: ERROR|" + String(servo) + "|" + String(value) + "|");
   }
 }
 
@@ -53,6 +49,8 @@ void Move_Servo(int servo, int degree)
       degree = 10;
 
     robotServos[servo].write(degree);
+    DebugPrint(String("Wrote to Servo: #") + String(servo) + String(" Value: ") + String(degree));
+    PrintMessage(String("Wrote to Servo: #") + String(servo) + String(" Value: ") + String(degree));
     return;
   }
 
@@ -74,6 +72,8 @@ void Move_Servo(int servo, int degree)
       delay(10 * (5 - GLOBAL_SERVO_SPEED));
     }
   }
+  DebugPrint(String("Wrote to Servo: #") + String(servo) + String(" Value: ") + String(degree));
+  PrintMessage(String("Wrote to Servo: #") + String(servo) + String(" Value: ") + String(degree));
 }
 
 int Get_Servo_Angle(int servo)

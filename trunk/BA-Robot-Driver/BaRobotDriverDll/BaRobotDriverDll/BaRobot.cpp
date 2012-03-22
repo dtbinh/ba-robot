@@ -23,6 +23,7 @@ BaRobot::BaRobot()
 	servoCount = 5;
 	isValidTransferMode = false;
 	isConnected = false;
+	baud = 57600;
 }
 
 void BaRobot::SetMode(int tm)
@@ -107,7 +108,7 @@ char* BaRobot::SendString(char* message)
 #pragma warning( disable : 4996 )
 char* BaRobot::communicateRS232(char* message)
 {
-	int notOkay = OpenComport(comPort - 1,9600);						// gives 1 if error and 0 if okay
+	int notOkay = OpenComport(comPort - 1,baud);						// gives 1 if error and 0 if okay
 	char* newMessage = new char[strlen(message) + 2];
 	int counterBytes = 0;
     

@@ -192,10 +192,12 @@ String* BaRobotWrapper::EraseCommandList()
 	String* retVal = "";
 	String* decodedString = GetAndSendMessageWrapper(message);
 	retVal = String::Concat(retVal, decodedString );
-	retVal = String::Concat(retVal, "\n" );
+	// retVal = String::Concat(retVal, "\n" );
+	// nicht mehr genutzt, da nur noch der CommandCount auf 0 gesetzt wird
 	// hier Sleep, da EEPROM Erasing etwas dauert... (3.3 ms pro byte * 4096 byte)
 	// ungefähr 13,52 Sekunden -> 15s
-	Sleep(15000);
+	// Sleep(15000);
+	Sleep(300);
 	message = "ACK";
 	decodedString = GetAndSendMessageWrapper(message);	
 	retVal = String::Concat(retVal, decodedString );

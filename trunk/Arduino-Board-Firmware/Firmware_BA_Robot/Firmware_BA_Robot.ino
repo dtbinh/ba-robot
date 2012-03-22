@@ -4,20 +4,21 @@
 #include "Constants.h"
 
 // Globale Variablen
-String INPUT_STRING = "";
-boolean IS_INPUT_STRING_COMPLETE = false;
-int GLOBAL_SERVO_SPEED = 5;
-boolean GLOBAL_BA_ROBOT_DEBUG = false;
+String  INPUT_STRING               = "";
+boolean IS_INPUT_STRING_COMPLETE   = false;
+int     GLOBAL_SERVO_SPEED         = 5;
+boolean GLOBAL_BA_ROBOT_DEBUG      = true;
+boolean GLOBAL_IS_CONNECTED        = false;
 // Servo servo;
 
 // Initializing Routine
 void setup() {      
-  Serial.begin(9600);
+  Serial.begin(57600);
   pinMode(13, OUTPUT);
   INPUT_STRING.reserve(200);
   if (GLOBAL_BA_ROBOT_DEBUG)
   {
-    Serial1.begin(9600);
+    Serial1.begin(115200);
     Serial1.println("Start BA_ROBOT_DEBUG");
   }
   DebugPrint("Setup Done...");
@@ -41,11 +42,13 @@ void loop() {
     else
     {
       DebugPrint("Complete String received: " + INPUT_STRING);
-      handleSerialCommands();
+      if (GLOBAL_IS_CONNECTED || INPUT_STRING == "ON")
+        handleSerialCommands();
+        
       ResetMessage();
     }
   }
-  delay(500);
+  // delay(500);
 }
 
 

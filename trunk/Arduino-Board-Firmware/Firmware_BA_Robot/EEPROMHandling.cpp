@@ -108,11 +108,18 @@ void LoadFromEEPROM()
 void ClearEEPROM()
 {
   DebugPrint("Function ClearEEPROM"); 
-  PrintMessage("\nTrying erase EEPROM...");
+  // PrintMessage("\nTrying erase EEPROM...");
+  DebugPrint("Trying erase EEPROM...");
+  
+  /*
+   * No Complete Erasin, set CommandCount to zero is enough
   for (int i = 0; i < 4096; i++)
   {
     EEPROM.write(i,0x00);
   }
+  */
+  SaveAnzahlBefehle(0);
+  DebugPrint("Erasing EEPROM done...");
   ResetMessage();
   WaitForMessage();  
   DebugPrint("Input came: " + INPUT_STRING); 

@@ -31,6 +31,7 @@ namespace BaRobotLibrary
 		int comPort;
 		int transferMode;
 		int servoCount;
+		int baud;
 	};
 }
 #endif // _BAROBOT_H
