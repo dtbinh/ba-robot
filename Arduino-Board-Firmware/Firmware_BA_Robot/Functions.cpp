@@ -28,12 +28,14 @@ void handleSerialCommands()
   // Switch Robot On
   if (command == "ON")
   {
+    GLOBAL_IS_CONNECTED = true;
     digitalWrite(13,HIGH);
     PrintMessage(command); 
   }
   // Switch Robot Off
   else if (command == "OFF")
   {
+    GLOBAL_IS_CONNECTED = false;
     digitalWrite(13,LOW);
     PrintMessage(command); 
   } 
@@ -64,7 +66,6 @@ void handleSerialCommands()
   else if (command == "MOVE")
   {
     Move_Servo(commandList);
-    DebugPrint(String("Wrote to Servo: #" + commandList.GetString(1) + " Value: " + commandList.GetString(2)));
     /*
     int oldValue = servo.read();
      int newValue = GetIntFromString(commandList.GetString(1));
@@ -99,7 +100,7 @@ void handleSerialCommands()
     int newSpeed = GetIntFromString(commandList.GetString(1));
     if (newSpeed >= 0 && newSpeed <= 5)
     {
-      DebugPrint("GLOBAL_SERVO_SPEED  set to: " + GLOBAL_SERVO_SPEED);
+      DebugPrint("GLOBAL_SERVO_SPEED  set to: " + String(newSpeed));
       GLOBAL_SERVO_SPEED = newSpeed;
     }
   }

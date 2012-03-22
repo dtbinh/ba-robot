@@ -22,6 +22,7 @@ extern String INPUT_STRING;
 extern boolean IS_INPUT_STRING_COMPLETE;
 extern int GLOBAL_SERVO_SPEED;
 extern boolean GLOBAL_BA_ROBOT_DEBUG;
+extern boolean GLOBAL_IS_CONNECTED;
 // extern Servo servo;
 
 #endif // _CONSTANTS_H
