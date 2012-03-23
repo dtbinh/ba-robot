@@ -7,6 +7,7 @@ void Servos_Init()
   DebugPrint("Function Servos_Init()");
   for (int i = 0; i < SERVOCOUNT; i++)
   {
+    DebugPrint("Attached Servo: #" + String(i) + " to PIN" + String(FIRSTPIN + i) );
     robotServos[i].attach(FIRSTPIN + i);
     Move_Servo(i,MIDPOS);
   }
