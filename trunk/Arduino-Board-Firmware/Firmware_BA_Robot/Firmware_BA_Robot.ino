@@ -23,6 +23,7 @@ void setup() {
   }
   DebugPrint("Setup Done...");
   DebugPrint("Waiting for Message from User...");
+  Servos_Init();
   /*
   servo.attach(2);
   servo.write(90);
