@@ -210,3 +210,17 @@ String* BaRobotWrapper::ToString()
 	String* retVal = new System::String(tempString.c_str());
 	return retVal;
 }
+
+String* BaRobotWrapper::OpenGripper()
+{
+	String* message = "OPEN_GRIPPER";
+	String* decodedString = GetAndSendMessageWrapper(message);
+	return decodedString;
+}
+
+String* BaRobotWrapper::CloseGripper()
+{
+	String* message = "CLOSE_GRIPPER";
+	String* decodedString = GetAndSendMessageWrapper(message);
+	return decodedString;
+}
