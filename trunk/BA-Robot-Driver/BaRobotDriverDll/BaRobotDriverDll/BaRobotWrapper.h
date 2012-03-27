@@ -27,6 +27,8 @@ namespace BaRobotLibrary
 		String* StoreCommandList(String* commandList[], int count);
 		String* GetCommandList();
 		String* EraseCommandList();
+		String* OpenGripper();
+		String* CloseGripper();
 		String* ToString();
 	};
 }

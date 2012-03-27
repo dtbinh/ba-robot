@@ -30,6 +30,7 @@ void handleSerialCommands()
   {
     GLOBAL_IS_CONNECTED = true;
     digitalWrite(13,HIGH);
+    Servos_Init();
     PrintMessage(command); 
   }
   // Switch Robot Off
@@ -37,6 +38,7 @@ void handleSerialCommands()
   {
     GLOBAL_IS_CONNECTED = false;
     digitalWrite(13,LOW);
+    Servos_Release();
     PrintMessage(command); 
   } 
   // EEPROM Handling
@@ -103,6 +105,16 @@ void handleSerialCommands()
       DebugPrint("GLOBAL_SERVO_SPEED  set to: " + String(newSpeed));
       GLOBAL_SERVO_SPEED = newSpeed;
     }
+  }
+  // Opens the Gripper
+  else if (command == "OPEN_GRIPPER")
+  {
+    Open_Gripper();
+  }
+  // Closes the Gripper
+  else if (command == "CLOSE_GRIPPER")
+  {
+    Close_Gripper();
   }
   // Other Command
   else
@@ -175,17 +187,26 @@ int GetIntFromString(String Value)
 void WaitForMessage()
 {
   DebugPrint("Waiting for Message...");
+  unsigned long startTime = millis();
+  unsigned long currentTime = millis();
   while (! IS_INPUT_STRING_COMPLETE)
   {    
     serialEvent();
+    if ( currentTime > (startTime + 5000 )) 
+    {
+      DebugPrint("Expected something but nothing came...");
+      break;
+    }
+    
+    currentTime = millis();
   }
 }
 
 void ResetMessage()
 {
-  DebugPrint("Resetting INPUT_STRING"); 
   IS_INPUT_STRING_COMPLETE = false;
   INPUT_STRING = "";
+  DebugPrint("INPUT_STRING resetted"); 
 }
 
 void handleReadCommand(StringArray commandList)

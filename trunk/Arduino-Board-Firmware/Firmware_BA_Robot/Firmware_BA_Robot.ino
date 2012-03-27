@@ -6,7 +6,8 @@
 // Globale Variablen
 String  INPUT_STRING               = "";
 boolean IS_INPUT_STRING_COMPLETE   = false;
-int     GLOBAL_SERVO_SPEED         = 5;
+// Stufen von 0 - 5
+int     GLOBAL_SERVO_SPEED         = 3;
 boolean GLOBAL_BA_ROBOT_DEBUG      = true;
 boolean GLOBAL_IS_CONNECTED        = false;
 // Servo servo;
@@ -23,7 +24,7 @@ void setup() {
   }
   DebugPrint("Setup Done...");
   DebugPrint("Waiting for Message from User...");
-  Servos_Init();
+  // Servos_Init();
   /*
   servo.attach(2);
   servo.write(90);
