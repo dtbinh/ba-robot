@@ -110,11 +110,13 @@ void handleSerialCommands()
   else if (command == "OPEN_GRIPPER")
   {
     Open_Gripper();
+    PrintMessage(String("Gripper opened..."));
   }
   // Closes the Gripper
   else if (command == "CLOSE_GRIPPER")
   {
     Close_Gripper();
+    PrintMessage(String("Gripper closed..."));
   }
   // Other Command
   else

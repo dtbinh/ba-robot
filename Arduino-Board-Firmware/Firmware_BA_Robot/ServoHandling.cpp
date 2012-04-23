@@ -6,14 +6,17 @@ Servo robotServos[SERVOCOUNT];
 void Servos_Init()
 {
   DebugPrint("Function Servos_Init()");
+  int temp_speed = GLOBAL_SERVO_SPEED;
+  GLOBAL_SERVO_SPEED = 5;
   DriveToNormalPos();
+  GLOBAL_SERVO_SPEED = temp_speed;
   for (int i = 0; i < SERVOCOUNT; i++)
   {
     DebugPrint("Attached Servo: #" + String(i) + " to PIN" + String(FIRSTPIN + i) );
     robotServos[i].attach(FIRSTPIN + i);
     // Move_Servo(i,MIDPOS);
   }
-  // DriveToNormalPos();
+  DriveToNormalPos();
 }
 
 void Servos_Release()
@@ -34,20 +37,52 @@ void Move_Servo(StringArray commandList)
   String retVal = commandList.GetString(0);
   int servo = -1;
   int value = -1;
+  boolean error = false;
 
-  if (GetIntFromString(commandList.GetString(1)) != -1)
-    servo = GetIntFromString(commandList.GetString(1));
-  if (GetIntFromString(commandList.GetString(2)) != -1)
-    value = GetIntFromString(commandList.GetString(2));
-
-  if (servo >= 0 && servo < SERVOCOUNT && value >= 0 && commandList.GetElementCount() > 1)
+  int count = ( commandList.GetElementCount() - 1 ) / 2;
+  
+  for (int i = 0; i < count; i++)
   {
-    DebugPrint("Servomovement: OKAY");
-    Move_Servo(servo, value);
+    if (GetIntFromString(commandList.GetString( (i * 2) + 1 )) != -1)
+      servo = GetIntFromString(commandList.GetString((i * 2) + 1));
+    if (GetIntFromString(commandList.GetString((i * 2) + 2)) != -1)
+      value = GetIntFromString(commandList.GetString((i * 2) + 2));
+  
+    if (servo >= 0 && servo < SERVOCOUNT && value >= 0 && commandList.GetElementCount() > 1)
+    {
+    }
+    else
+    {
+      error = true;
+    }
+  }
+  if (error)
+  {
+    PrintMessage(String("There was an error in Movement..."));
+    return;
   }
   else
+    PrintMessage(String("All good..."));
+
+  for (int i = 0; i < count; i++)
   {
-    DebugPrint("Servomovement: ERROR|" + String(servo) + "|" + String(value) + "|");
+    DebugPrint("GetString Servo: " + String(commandList.GetString( (i * 2) + 1 )));
+    DebugPrint("GetString Value: " + String(commandList.GetString( (i * 2) + 2 )));
+    
+    if (GetIntFromString(commandList.GetString( (i * 2) + 1 )) != -1)
+      servo = GetIntFromString(commandList.GetString((i * 2) + 1));
+    if (GetIntFromString(commandList.GetString((i * 2) + 2)) != -1)
+      value = GetIntFromString(commandList.GetString((i * 2) + 2));
+  
+    if (servo >= 0 && servo < SERVOCOUNT && value >= 0 && commandList.GetElementCount() > 1)
+    {
+      DebugPrint("Servomovement: OKAY");
+      Move_Servo(servo, value);
+    }
+    else
+    {
+      DebugPrint("Servomovement: ERROR|" + String(servo) + "|" + String(value) + "|");
+    }
   }
 }
 
@@ -67,8 +102,13 @@ void Move_Servo(int servo, int degree)
 
     robotServos[servo].write(degree);
     */
-    DebugPrint(String("USE GRIPPER_OPEN Command"));
-    PrintMessage(String("USE GRIPPER_OPEN Command"));
+    // DebugPrint(String("USE GRIPPER_OPEN Command"));
+    // PrintMessage(String("USE GRIPPER_OPEN Command"));
+    if (degree > 90)
+      Open_Gripper();
+    else
+      Close_Gripper();
+      
     return;
   }
 
@@ -79,7 +119,7 @@ void Move_Servo(int servo, int degree)
     for (int i = oldValue; i <= degree; i++)
     {
       robotServos[servo].write(i);
-      DebugPrint("Delay: " + String(10 * (5 - GLOBAL_SERVO_SPEED)));
+      // DebugPrint("Delay: " + String(10 * (5 - GLOBAL_SERVO_SPEED)));
       delay(10 * (5 - GLOBAL_SERVO_SPEED));
       // int compare = robotServos[servo].read();
       // long duration = pulseIn(servo,HIGH);
@@ -103,7 +143,7 @@ void Move_Servo(int servo, int degree)
     for (int i = oldValue; i >= degree; i--)
     {
       robotServos[servo].write(i);
-      DebugPrint("Delay: " + String(10 * (5 - GLOBAL_SERVO_SPEED)));
+      // DebugPrint("Delay: " + String(10 * (5 - GLOBAL_SERVO_SPEED)));
       delay(10 * (5 - GLOBAL_SERVO_SPEED));
       // int compare = robotServos[servo].read();
       // int test = analogRead(servo);
@@ -122,7 +162,7 @@ void Move_Servo(int servo, int degree)
     }
   }
   DebugPrint(String("Wrote to Servo: #") + String(servo) + String(" Value: ") + String(degree));
-  PrintMessage(String("Wrote to Servo: #") + String(servo) + String(" Value: ") + String(degree));
+  // PrintMessage(String("Wrote to Servo: #") + String(servo) + String(" Value: ") + String(degree));
 }
 
 int Get_Servo_Angle(int servo)
@@ -135,16 +175,14 @@ int Get_Servo_Angle(int servo)
 
 void Open_Gripper()
 {
-  robotServos[SERVOGRIPPER].write(15);  
+  robotServos[SERVOGRIPPER].write(165);  
   DebugPrint(String("Wrote to Servo: #") + String(SERVOGRIPPER) + String(" Value: ") + String(15) + " (GRIPPER)");
-  PrintMessage(String("Gripper opened..."));
 }
 
 void Close_Gripper()
 {
-  robotServos[SERVOGRIPPER].write(165);  
+  robotServos[SERVOGRIPPER].write(15);  
   DebugPrint(String("Wrote to Servo: #") + String(SERVOGRIPPER) + String(" Value: ") + String(165) + " (GRIPPER)");
-  PrintMessage(String("Gripper opened..."));
 }
 
 void DriveToNormalPos()
