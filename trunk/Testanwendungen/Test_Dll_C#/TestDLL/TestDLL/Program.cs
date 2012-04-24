@@ -41,6 +41,10 @@ namespace TestDLL
                 {
                     case "exit":
                         break;
+                    case "DEMO":
+                        Console.WriteLine("DemoMode Started!!!");
+                        DemoMode(brw);
+                        break;
                     case "ON":
                         output = brw.StartCommunication().ToString();
                         break;
@@ -70,15 +74,61 @@ namespace TestDLL
                 if (temp == "exit")
                     break;
 
-                Console.WriteLine("Start: " + start);
+                // Console.WriteLine("Start: " + start);
                 Console.WriteLine("Output: " + output);
-                Console.WriteLine("Duration: " + (DateTime.Now - start));
-                Console.WriteLine("End: " + DateTime.Now);
+                // Console.WriteLine("Duration: " + (DateTime.Now - start));
+                // Console.WriteLine("End: " + DateTime.Now);
 
 #if DEBUG
                 Console.Write(temp2);
 #endif
             }
+        }
+
+        private static void DemoMode(BaRobotLibrary.BaRobotWrapper brw)
+        {
+            String executeCommand = "ON";
+            DateTime end = DateTime.Now;
+            DateTime start = DateTime.Now;
+            String output = brw.StartCommunication().ToString();
+            end = DateTime.Now;
+            PrintMessage(executeCommand, output, start, end);
+            System.Threading.Thread.Sleep(14000);
+            executeCommand = "MOVE;0;15;1;120;2;140;3;120;4;90";
+            start = DateTime.Now;
+            output = brw.SendString(executeCommand).ToString();
+            end = DateTime.Now;
+            PrintMessage(executeCommand, output, start, end);
+            System.Threading.Thread.Sleep(7000);
+            executeCommand = "MOVE;0;165;1;90;2;160;3;180;4;30";
+            start = DateTime.Now;
+            output = brw.SendString(executeCommand).ToString();
+            end = DateTime.Now;
+            PrintMessage(executeCommand, output, start, end);
+            System.Threading.Thread.Sleep(7000);
+            executeCommand = "OFF";
+            start = DateTime.Now;
+            output = brw.StopCommunication().ToString();
+            end = DateTime.Now;
+            PrintMessage(executeCommand, output, start, end);
+        }
+
+        private static void PrintMessage(String executeCommand, String output)
+        {
+            Console.WriteLine("Command was: " + executeCommand);
+            Console.WriteLine("Received: " + output);
+            // Console.WriteLine("Start: " + start);
+            // Console.WriteLine("End: " + DateTime.Now);
+            // Console.WriteLine("Duration: " + (DateTime.Now - start));
+        }
+
+        private static void PrintMessage(String executeCommand, String output, DateTime start, DateTime end)
+        {
+            Console.WriteLine("Command was: " + executeCommand);
+            Console.WriteLine("Received: " + output);
+            Console.WriteLine("Start: " + start);
+            Console.WriteLine("End: " + end);
+            Console.WriteLine("Duration: " + (end - start));
         }
     }
 }

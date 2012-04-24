@@ -191,6 +191,7 @@ void DriveToNormalPos()
   DebugPrint("Speed: " + String(GLOBAL_SERVO_SPEED));
   Move_Servo(4,180);
   Move_Servo(3,110);
+  Move_Servo(2,130);
   Move_Servo(2,160);
   Move_Servo(3,180);
   Move_Servo(4,30);
