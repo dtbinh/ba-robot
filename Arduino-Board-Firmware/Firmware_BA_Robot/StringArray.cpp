@@ -98,3 +98,23 @@ int StringArray::GetStringAsInt(int index)
 
   return tempInt;
 }
+
+String StringArray::GetAsConcatedString()
+{
+  return GetAsConcatedString(";");
+}
+
+String StringArray::GetAsConcatedString(String delim)
+{
+  String retVal = "";
+  
+  Liste* tempList = completeListe;
+  for (int i = 0; i < elements; i++)
+  {
+    retVal += tempList->data + delim;
+    tempList = tempList->next;
+  }
+  
+  return retVal;
+  
+}

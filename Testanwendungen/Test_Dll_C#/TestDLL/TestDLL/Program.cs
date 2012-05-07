@@ -25,7 +25,7 @@ namespace TestDLL
             brw.SetMode(BaRobotLibrary.TransferMode.COM);
             brw.SetComPort(3);
             string temp2= brw.ToString();
-            string[] STORE = { "00;01;02;03;04;05", "16;17;18;19;20;21" };
+            string[] STORE = { "00;15;120;140;120;90", "00;165;90;160;180;30" };
 
 #if DEBUG
             Console.Write(temp2);
@@ -44,6 +44,10 @@ namespace TestDLL
                     case "DEMO":
                         Console.WriteLine("DemoMode Started!!!");
                         DemoMode(brw);
+                        break;
+                    case "DEMO2":
+                        Console.WriteLine("Demo2Mode Started!!!");
+                        Demo2Mode(brw);
                         break;
                     case "ON":
                         output = brw.StartCommunication().ToString();
@@ -66,16 +70,21 @@ namespace TestDLL
                     case "CLOSE":
                         output = brw.CloseGripper();
                         break;
+                    case "CLS":
+                        Console.Clear();
+                        break;
                     default:
                         output = brw.SendString(temp);
                         break;
                 }
                 temp2 = brw.ToString();
+
                 if (temp == "exit")
                     break;
 
                 // Console.WriteLine("Start: " + start);
-                Console.WriteLine("Output: " + output);
+                if (temp != "CLS")
+                    Console.WriteLine("Output: " + output);
                 // Console.WriteLine("Duration: " + (DateTime.Now - start));
                 // Console.WriteLine("End: " + DateTime.Now);
 
@@ -106,6 +115,30 @@ namespace TestDLL
             end = DateTime.Now;
             PrintMessage(executeCommand, output, start, end);
             System.Threading.Thread.Sleep(7000);
+            executeCommand = "OFF";
+            start = DateTime.Now;
+            output = brw.StopCommunication().ToString();
+            end = DateTime.Now;
+            PrintMessage(executeCommand, output, start, end);
+        }
+
+        private static void Demo2Mode(BaRobotLibrary.BaRobotWrapper brw)
+        {
+            String executeCommand = "ON";
+            DateTime end = DateTime.Now;
+            DateTime start = DateTime.Now;
+            String output = brw.StartCommunication().ToString();
+            end = DateTime.Now;
+            PrintMessage(executeCommand, output, start, end);
+            System.Threading.Thread.Sleep(14000);
+            
+            executeCommand = "LISTPOS;0;1";
+            start = DateTime.Now;
+            output = brw.SendString(executeCommand).ToString();
+            end = DateTime.Now;
+            PrintMessage(executeCommand, output, start, end);
+            System.Threading.Thread.Sleep(14000);
+            
             executeCommand = "OFF";
             start = DateTime.Now;
             output = brw.StopCommunication().ToString();

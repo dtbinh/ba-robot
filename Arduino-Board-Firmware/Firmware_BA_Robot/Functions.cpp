@@ -106,6 +106,25 @@ void handleSerialCommands()
       GLOBAL_SERVO_SPEED = newSpeed;
     }
   }
+  // Play LISTPOS #position
+  else if (command == "LISTPOS")
+  {
+    int numberPositions = commandList.GetElementCount();
+    
+    for (int i = 1; i < numberPositions; i++)
+    {
+      int pos = GetIntFromString(commandList.GetString(i));
+      DebugPrint("Try to get position " + String(pos) + " from List..." );
+      DebugPrint("Number of Stored Commands is " + String(GetAnzahlBefehle()));
+      if (pos > -1 && GetAnzahlBefehle() > pos)
+      {
+        String listCommand = GetCommandWithServoNumber(pos);
+        StringArray tempArray = GetCommandList(listCommand);
+        DebugPrint(tempArray.GetAsConcatedString());
+        Move_Servo(tempArray);
+      }
+    }
+  }
   // Opens the Gripper
   else if (command == "OPEN_GRIPPER")
   {

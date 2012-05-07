@@ -9,5 +9,10 @@ boolean SaveToEEPROM();
 void LoadFromEEPROM();
 // Alles löschen
 void ClearEEPROM();
+// Reads command from the given index from eeprom
+String GetCommandAt(int index);
+String GetCommandWithServoNumber(int index);
+int GetAnzahlBefehle();
+
 
 #endif // _EEPROMHANDLING_H

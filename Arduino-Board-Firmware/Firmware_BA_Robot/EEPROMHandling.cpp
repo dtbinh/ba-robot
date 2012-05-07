@@ -192,3 +192,27 @@ String GetCommandAt(int index)
   return retVal;
 }
 
+String GetCommandWithServoNumber(int index)
+{
+  int offset = 10 + (index * (5 + 1));
+  String retVal = "";
+  for (int i = 0; i < 6; i++)
+  {
+
+    int temp = EEPROM.read(offset + i);
+    if ( (i == 0) && (temp == 0) )
+      retVal += "MOVE";
+    else
+    {
+      if (i != 0)
+        retVal += String(i - 1) + ";";
+      retVal += temp;
+    }
+    if (i != 5)
+      retVal += ";";
+  }
+
+  return retVal;
+}
+
+
