@@ -24,6 +24,8 @@ public:
     return elements;
   }
   int GetStringAsInt(int index);
+  String GetAsConcatedString(String delim);
+  String GetAsConcatedString();  
 private:  
   int elements;
   Liste *completeListe;
@@ -31,4 +33,5 @@ private:
 };
 
 #endif // _STRINGARRAY_H
+
 
