@@ -1,6 +1,5 @@
 #summary Update Info to Ba-Robot
 
-#labels Featured
 = Recent Commits to trunk =
 
 <wiki:gadget url="http://sorryrobot.com/projecthostingupdates/com1.xml" up_projectName="ba-robot" width="800"  height="100"/>
