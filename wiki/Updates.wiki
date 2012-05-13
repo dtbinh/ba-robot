@@ -1,4 +1,5 @@
 #summary Update Info to Ba-Robot
+#labels Featured
 
 = Recent Commits to trunk =
 
