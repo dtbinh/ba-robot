@@ -1,5 +1,6 @@
 #include "ServoHandling.h"
 void DriveToNormalPos();
+void DelayBySpeedEqualsMax();
 
 Servo robotServos[SERVOCOUNT];
 
@@ -7,7 +8,8 @@ void Servos_Init()
 {
   DebugPrint("Function Servos_Init()");
   int temp_speed = GLOBAL_SERVO_SPEED;
-  GLOBAL_SERVO_SPEED = 5;
+  // for speeding up the init
+  GLOBAL_SERVO_SPEED = 4;
   DriveToNormalPos();
   GLOBAL_SERVO_SPEED = temp_speed;
   for (int i = 0; i < SERVOCOUNT; i++)
@@ -78,6 +80,7 @@ void Move_Servo(StringArray commandList)
     {
       DebugPrint("Servomovement: OKAY");
       Move_Servo(servo, value);
+      DelayBySpeedEqualsMax();
     }
     else
     {
@@ -190,12 +193,27 @@ void DriveToNormalPos()
   DebugPrint("DriveToNormalPos()");
   DebugPrint("Speed: " + String(GLOBAL_SERVO_SPEED));
   Move_Servo(4,180);
+  DelayBySpeedEqualsMax();
   Move_Servo(3,110);
+  DelayBySpeedEqualsMax();
   Move_Servo(2,130);
+  DelayBySpeedEqualsMax();
   Move_Servo(2,160);
+  DelayBySpeedEqualsMax();
   Move_Servo(3,180);
+  DelayBySpeedEqualsMax();
   Move_Servo(4,30);
+  DelayBySpeedEqualsMax();
   Move_Servo(1,60);
+  DelayBySpeedEqualsMax();
   Move_Servo(1,120);
+  DelayBySpeedEqualsMax();
   Move_Servo(1,90);
+  DelayBySpeedEqualsMax();
+}
+
+void DelayBySpeedEqualsMax()
+{
+  if (GLOBAL_SERVO_SPEED == 5)
+    delay(750); 
 }

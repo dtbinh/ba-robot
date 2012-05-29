@@ -104,6 +104,7 @@ void handleSerialCommands()
     {
       DebugPrint("GLOBAL_SERVO_SPEED  set to: " + String(newSpeed));
       GLOBAL_SERVO_SPEED = newSpeed;
+      SaveSpeed(newSpeed);
     }
   }
   // Play LISTPOS #position
