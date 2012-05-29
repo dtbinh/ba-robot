@@ -13,6 +13,8 @@ void ClearEEPROM();
 String GetCommandAt(int index);
 String GetCommandWithServoNumber(int index);
 int GetAnzahlBefehle();
+int GetSpeed();
+void SaveSpeed(int);
 
 
 #endif // _EEPROMHANDLING_H

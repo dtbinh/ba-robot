@@ -24,6 +24,17 @@ void setup() {
   }
   DebugPrint("Setup Done...");
   DebugPrint("Waiting for Message from User...");
+  int tempSpeed = GetSpeed();
+  if ( tempSpeed > 0 && tempSpeed <= 5)
+  {
+    GLOBAL_SERVO_SPEED = tempSpeed;
+    DebugPrint("Speed read from EEPROM: " + String(tempSpeed));
+  }
+  else
+  {
+    SaveSpeed(GLOBAL_SERVO_SPEED);
+    DebugPrint("Speed initialized and stored to EEPROM: " + String(tempSpeed));
+  }
   // Servos_Init();
   /*
   servo.attach(2);
@@ -44,7 +55,7 @@ void loop() {
     else
     {
       DebugPrint("Complete String received: " + INPUT_STRING);
-      if (GLOBAL_IS_CONNECTED || INPUT_STRING == "ON")
+      if (GLOBAL_IS_CONNECTED || INPUT_STRING == "ON" || INPUT_STRING.startsWith("SPEED") )
         handleSerialCommands();
         
       ResetMessage();

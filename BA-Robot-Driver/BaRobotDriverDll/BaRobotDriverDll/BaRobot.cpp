@@ -85,9 +85,9 @@ bool BaRobot::StopCommunication()
 char* BaRobot::SendString(char* message)
 {
 	// transfermode == Usb || (transfermode == com and port > 1 && port < 21 )
-	if (isValidTransferMode && strlen(message) < 10000 && ( isConnected || (!strcmp(message,"ON")) ))
+	if (isValidTransferMode && strlen(message) < 10000 && ( isConnected || (!strcmp(message,"ON") || (!strncmp (message,"SPEED",5)) )) )
 	{
-		if (!isConnected)
+		if (!isConnected && !strcmp(message,"ON"))
 			isConnected = true;
 
 		if (transferMode == TransferMode::COM)
