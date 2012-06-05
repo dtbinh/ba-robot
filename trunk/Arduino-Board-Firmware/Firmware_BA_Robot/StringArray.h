@@ -7,6 +7,7 @@
 #include "WProgram.h"
 #endif
 
+// private List with Data and Pointer to next element
 struct Liste
 {
   String data;
@@ -33,5 +34,4 @@ private:
 };
 
 #endif // _STRINGARRAY_H
-
 

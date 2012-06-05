@@ -10,7 +10,6 @@ boolean IS_INPUT_STRING_COMPLETE   = false;
 int     GLOBAL_SERVO_SPEED         = 3;
 boolean GLOBAL_BA_ROBOT_DEBUG      = true;
 boolean GLOBAL_IS_CONNECTED        = false;
-// Servo servo;
 
 // Initializing Routine
 void setup() {      
@@ -35,12 +34,6 @@ void setup() {
     SaveSpeed(GLOBAL_SERVO_SPEED);
     DebugPrint("Speed initialized and stored to EEPROM: " + String(tempSpeed));
   }
-  // Servos_Init();
-  /*
-  servo.attach(2);
-  servo.write(90);
-  servo.detach();
-  */
 }
 
 // Main Loop
@@ -61,7 +54,5 @@ void loop() {
       ResetMessage();
     }
   }
-  // delay(500);
 }
-
 

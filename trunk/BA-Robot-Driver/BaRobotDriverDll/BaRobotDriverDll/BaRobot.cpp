@@ -1,3 +1,33 @@
+ /**************************************************************************
+ *									   									   *
+ *      Created: 05.06.2012			     								   *
+ *      Author:  Michael Berth / Christian Güthling		   				   *
+ *      mail:	 berdsen.home@gmail.com					   				   *
+ *      mail:	 guedy87@gmx.de     					   				   *
+ *									   									   *
+ ***************************************************************************
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ ***************************************************************************
+ *									   									   *
+ * This version of GPL is at http://www.gnu.org/licenses/gpl.html	       *
+ *									   									   *
+ ***************************************************************************
+ */
+// BaRobot.cpp
+
 // for communication with Com
 #include "rs232.h"
 // needed for managed dll
@@ -16,6 +46,8 @@
 using namespace std;
 using namespace BaRobotLibrary;
 
+// Standard Konstruktor
+// Setzen aller Eigenschaften auf einen sinnvollen Startwert
 BaRobot::BaRobot()
 {
 	comPort = 0;
@@ -26,6 +58,8 @@ BaRobot::BaRobot()
 	baud = 57600;
 }
 
+// Zum setzen des Modus
+// Com oder USB (derzeit noch nicht implementiert)
 void BaRobot::SetMode(int tm)
 {
 	transferMode = tm;
@@ -43,6 +77,7 @@ void BaRobot::SetMode(int tm)
 	}
 }
 
+// Zum setzen des ComPortes
 void BaRobot::SetComPort(int port)
 {
 	if (transferMode == TransferMode::COM)
@@ -62,6 +97,7 @@ void BaRobot::SetComPort(int port)
 		comPort = 0;
 }
 
+// Start der Kommunikation mit dem BA-Robot
 bool BaRobot::StartCommunication()
 {
 	char* retVal = SendString("ON");
@@ -70,6 +106,7 @@ bool BaRobot::StartCommunication()
 	return isConnected;
 }
 
+// Beenden der Kommunikation mit dem BA-Robot
 bool BaRobot::StopCommunication()
 {
 	if (isConnected)
@@ -82,6 +119,7 @@ bool BaRobot::StopCommunication()
 		return isConnected;
 }
 
+// Eine Zeichenkette an den BA-Robot senden
 char* BaRobot::SendString(char* message)
 {
 	// transfermode == Usb || (transfermode == com and port > 1 && port < 21 )
@@ -105,6 +143,7 @@ char* BaRobot::SendString(char* message)
 	}
 }
 
+// Zur Kommunikation via RS232
 #pragma warning( disable : 4996 )
 char* BaRobot::communicateRS232(char* message)
 {
@@ -144,6 +183,7 @@ char* BaRobot::communicateRS232(char* message)
 	return "Error opening the serial line...";
 }
 
+// Ausgabe des BA-Robot Kommunikationsprotokolls
 string BaRobot::ToString()
 {
 	stringstream stream;
@@ -164,11 +204,13 @@ string BaRobot::ToString()
 	return stream.str();
 }
 
+// Kopiekonstruktor (unbedingt benötigt fürs verwenden der DLL unter CPP)
 BaRobot::BaRobot(const BaRobot& obj)
 {
 	*this = obj;
 }
 
+// Kopiekonstruktor (unbedingt benötigt fürs verwenden der DLL unter CPP)
 BaRobot& BaRobot::operator=(const BaRobot& rhs) 
 {
   *this = rhs;

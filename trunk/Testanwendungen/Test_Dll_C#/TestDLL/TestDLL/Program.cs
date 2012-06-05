@@ -21,7 +21,7 @@ namespace TestDLL
         {
             // BaRobotLibrary.BaRobot robot = new BaRobotLibrary.BaRobot();
             BaRobotLibrary.BaRobotWrapper brw = new BaRobotLibrary.BaRobotWrapper();
-            brw.SetMode(BaRobotLibrary.TransferMode.USB);
+            // brw.SetMode(BaRobotLibrary.TransferMode.USB);
             brw.SetMode(BaRobotLibrary.TransferMode.COM);
             brw.SetComPort(3);
             string temp2= brw.ToString();
