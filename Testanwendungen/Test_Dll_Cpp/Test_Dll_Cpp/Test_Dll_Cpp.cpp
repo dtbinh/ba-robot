@@ -19,6 +19,7 @@ void sendString();
 void sendStorage();
 void getStorage();
 void eraseStorage();
+void demoMode();
 
 // Managed Class Wrapper for Global Use of BaRobotWrapper
 ref class ManagedWrapper
@@ -49,6 +50,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << "4. STORE " << endl;
 		cout << "5. GET " << endl;
 		cout << "6. ERASE " << endl;
+		cout << "7. Demo Mode" << endl;
 		cout << "e: Exit " << endl;
 		cout << "Your choice: "; 
 		input = cin.get(); 
@@ -82,6 +84,9 @@ void handleCommmands(char input)
 		break;
 	case '6': 
 		eraseStorage();
+		break;
+	case '7':
+		demoMode();
 		break;
 	default:
 		break;
@@ -149,8 +154,8 @@ void sendString()
 void sendStorage()
 {
 	array<System::String ^>^ STORE = gcnew array<System::String ^>(2);
-	STORE[0]="00;01;02;03;04;05";
-    STORE[1]="16;17;18;19;20;21";
+	STORE[0]="00;15;120;140;120;90";
+    STORE[1]="00;165;90;160;180;30";
 	String^ outString = ManagedWrapper::BaRobot->StoreCommandList(STORE,2);
 	std::string outArray;
 	MarshalString(outString, outArray);
@@ -182,6 +187,23 @@ void eraseStorage()
 	cin.clear(); 
     cin.ignore(cin.rdbuf()->in_avail()); 
     cin.get(); 
+}
+
+void demoMode()
+{
+	turnRobotOn();
+	System::Threading::Thread::Sleep(14000);
+	
+	char* sendString = new char[100];
+	sendString = "LISTPOS;0;1";
+	System::String^ str = gcnew System::String(sendString);
+	System::String^ outString = ManagedWrapper::BaRobot->SendString(str);
+	std::string outArray;
+	MarshalString(outString, outArray);
+	cout << "Message received: " << outArray << endl;
+
+	System::Threading::Thread::Sleep(14000);
+	turnRobotOff();
 }
 
 // Converting from System::String^ to std::string

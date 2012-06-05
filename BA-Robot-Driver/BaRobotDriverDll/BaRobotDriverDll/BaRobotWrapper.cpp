@@ -1,3 +1,33 @@
+ /**************************************************************************
+ *									   									   *
+ *      Created: 05.06.2012			     								   *
+ *      Author:  Michael Berth / Christian Güthling		   				   *
+ *      mail:	 berdsen.home@gmail.com					   				   *
+ *      mail:	 guedy87@gmx.de     					   				   *
+ *									   									   *
+ ***************************************************************************
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ ***************************************************************************
+ *									   									   *
+ * This version of GPL is at http://www.gnu.org/licenses/gpl.html	       *
+ *									   									   *
+ ***************************************************************************
+ */
+// BaRobotWrapper.cpp
+
 #include "stdafx.h" 
 #include <stdio.h> 
 #include <string>
@@ -8,16 +38,19 @@
 using namespace System::Runtime::InteropServices; 
 using namespace BaRobotLibrary;
 
+// Standardkonstruktor
 BaRobotWrapper::BaRobotWrapper()
 {
 	_pBaRobot = new BaRobot();
 }
 
+// Standarddestruktor
 BaRobotWrapper::~BaRobotWrapper() 
 { 
    Dispose(false); 
 } 
 
+// Zum verwerfen des Objectes (GC)
 void BaRobotWrapper::Dispose(bool disposing) 
 { 
     if (_pBaRobot) 
@@ -32,48 +65,57 @@ void BaRobotWrapper::Dispose(bool disposing)
     } 
 } 
 
+// Zum verwerfen des Objectes (GC)
 void BaRobotWrapper::Dispose() 
 { 
    Dispose(true); 
 }
 
+// Setzen des Modes (COM oder USB)
 void BaRobotWrapper::SetMode(int tm)
 {
 	_pBaRobot->SetMode(tm);
 }
 
+// Setzen des Comports
 void BaRobotWrapper::SetComPort(int cp)
 {
 	_pBaRobot->SetComPort(cp);
 }
 
+// Starten der Kommunikation
 bool BaRobotWrapper::StartCommunication()
 {
 	return _pBaRobot->StartCommunication();
 }
 
+// Stoppen der Kommunikation
 bool BaRobotWrapper::StopCommunication()
 {
 	return _pBaRobot->StopCommunication();
 }
 
+// Nachricht an BA-Robot senden
 String* BaRobotWrapper::SendString(String* message)
 {
 	return GetAndSendMessageWrapper(message);
 }
 
+// Kopierkonstruktor
 BaRobotWrapper::BaRobotWrapper(const BaRobotWrapper& obj)
 {
 	this->_pBaRobot = obj._pBaRobot;
 	*this = obj;
 }
 
+// Kopierkonstruktor
 BaRobotWrapper& BaRobotWrapper::operator=(const BaRobotWrapper& rhs) 
 {
     *this = rhs;
     return *this;
 }
 
+// Speichern einer Commandoliste (Format: a0,a1,a2,a3,a4 für jeden Servo einen Wert)
 String* BaRobotWrapper::StoreCommandList(String* commandList[], int count)
 {
 	String* message = "STORE";
@@ -99,6 +141,7 @@ String* BaRobotWrapper::StoreCommandList(String* commandList[], int count)
 	return "Finished Saving...";
 }
 
+// Auslesen der Commandoliste
 #pragma warning( disable : 4101 )
 String* BaRobotWrapper::GetCommandList()
 {
@@ -171,6 +214,7 @@ String* BaRobotWrapper::GetCommandList()
 	return retVal;
 }
 
+// Zum Ausgeben der Texte
 String* BaRobotWrapper::GetAndSendMessageWrapper(String* message)
 {
 	IntPtr messageBuffer = Marshal::StringToHGlobalAnsi(message);
@@ -186,6 +230,7 @@ String* BaRobotWrapper::GetAndSendMessageWrapper(String* message)
 	return decodedString;
 }
 
+// Löschen der Commandoliste die auf dem EEPROM des BA-Robot gespeichert ist
 String* BaRobotWrapper::EraseCommandList()
 {
 	String* message = "ERASE";
@@ -204,6 +249,7 @@ String* BaRobotWrapper::EraseCommandList()
 	return retVal;
 }
 
+// Ausgabe des Kommunikationsprotokolls
 String* BaRobotWrapper::ToString()
 {
 	std::string tempString = _pBaRobot->ToString();
@@ -211,6 +257,7 @@ String* BaRobotWrapper::ToString()
 	return retVal;
 }
 
+// Kommando zum öffnen des Greifarms
 String* BaRobotWrapper::OpenGripper()
 {
 	String* message = "OPEN_GRIPPER";
@@ -218,6 +265,7 @@ String* BaRobotWrapper::OpenGripper()
 	return decodedString;
 }
 
+// Kommando zum schließen des Greifarms
 String* BaRobotWrapper::CloseGripper()
 {
 	String* message = "CLOSE_GRIPPER";
