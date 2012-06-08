@@ -42,6 +42,7 @@ namespace BaRobotLibrary
 	private:
 		BaRobot __nogc* _pBaRobot;
 		String* GetAndSendMessageWrapper(String* message);
+		int speed;
 	public:
 		BaRobotWrapper();
 		BaRobotWrapper(const BaRobotWrapper& obj);
@@ -60,6 +61,7 @@ namespace BaRobotLibrary
 		String* OpenGripper();
 		String* CloseGripper();
 		String* ToString();
+		int GetSpeed();
 	};
 }
 

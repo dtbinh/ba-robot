@@ -37,9 +37,9 @@ void handleSerialCommands()
   else if (command == "OFF")
   {
     GLOBAL_IS_CONNECTED = false;
+    PrintMessage("OFF"); 
     digitalWrite(13,LOW);
     Servos_Release();
-    PrintMessage(command); 
   } 
   // EEPROM Handling
   // Store Movement List
@@ -106,6 +106,11 @@ void handleSerialCommands()
       GLOBAL_SERVO_SPEED = newSpeed;
       SaveSpeed(newSpeed);
     }
+    PrintMessage("Speed set to: " + String(GLOBAL_SERVO_SPEED));
+  }
+  else if (command == "SPEED?")
+  {
+    PrintMessage(String(GLOBAL_SERVO_SPEED));
   }
   // Play LISTPOS #position
   else if (command == "LISTPOS")

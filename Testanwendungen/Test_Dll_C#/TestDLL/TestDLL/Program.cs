@@ -17,26 +17,26 @@ namespace TestDLL
     
     class Program
     {
+        static int speed = 3;
+        //                  speed = {     0,     1,     2,     3,     4,     5} 
+        static int[] sleepSeconds = { 38200, 32200, 25700, 19400, 13100, 12400 };
+
         static void Main(string[] args)
-        {
-            // BaRobotLibrary.BaRobot robot = new BaRobotLibrary.BaRobot();
+        {   
             BaRobotLibrary.BaRobotWrapper brw = new BaRobotLibrary.BaRobotWrapper();
-            // brw.SetMode(BaRobotLibrary.TransferMode.USB);
             brw.SetMode(BaRobotLibrary.TransferMode.COM);
             brw.SetComPort(3);
-            string temp2= brw.ToString();
-            string[] STORE = { "00;15;120;140;120;90", "00;165;90;160;180;30" };
+            string[] STORE = { "00;15;120;140;120;90", "00;165;25;90;150;130","00;165;90;160;180;30" };
+            speed = brw.GetSpeed();
 
-#if DEBUG
-            Console.Write(temp2);
-#endif
-            // String test = brw.GetCommand(0);
             while (true)
             {
                 Console.Write("Input : ");
                 String temp = Console.ReadLine();
                 String output = String.Empty;
                 DateTime start = DateTime.Now;
+                speed = brw.GetSpeed();
+                Console.WriteLine("Read Speed is: " + speed.ToString());
                 switch (temp)
                 {
                     case "exit":
@@ -50,16 +50,22 @@ namespace TestDLL
                         Demo2Mode(brw);
                         break;
                     case "ON":
-                        output = brw.StartCommunication().ToString();
+                        if (brw.StartCommunication())
+                            output = "Device Successfully connected";
+                        else
+                            output = "Could not connect Device";
                         break;
                     case "STORE":
-                        output = brw.StoreCommandList(STORE,2);
+                        output = brw.StoreCommandList(STORE,STORE.Length);
                         break;
                     case "GET":
                         output = brw.GetCommandList();
                         break;
                     case "OFF":
-                        output = brw.StopCommunication().ToString();
+                        if (brw.StopCommunication())
+                            output = "Device Successfully disconnected";
+                        else
+                            output = "Could not disconnect Device. Was it connected?";
                         break;
                     case "ERASE":
                         output = brw.EraseCommandList();
@@ -77,20 +83,12 @@ namespace TestDLL
                         output = brw.SendString(temp);
                         break;
                 }
-                temp2 = brw.ToString();
 
                 if (temp == "exit")
                     break;
 
-                // Console.WriteLine("Start: " + start);
-                if (temp != "CLS")
+                if (temp != "CLS" && output != String.Empty)
                     Console.WriteLine("Output: " + output);
-                // Console.WriteLine("Duration: " + (DateTime.Now - start));
-                // Console.WriteLine("End: " + DateTime.Now);
-
-#if DEBUG
-                Console.Write(temp2);
-#endif
             }
         }
 
@@ -102,7 +100,7 @@ namespace TestDLL
             String output = brw.StartCommunication().ToString();
             end = DateTime.Now;
             PrintMessage(executeCommand, output, start, end);
-            System.Threading.Thread.Sleep(14000);
+            System.Threading.Thread.Sleep(sleepSeconds[speed]);
             executeCommand = "MOVE;0;15;1;120;2;140;3;120;4;90";
             start = DateTime.Now;
             output = brw.SendString(executeCommand).ToString();
@@ -127,21 +125,28 @@ namespace TestDLL
             String executeCommand = "ON";
             DateTime end = DateTime.Now;
             DateTime start = DateTime.Now;
-            String output = brw.StartCommunication().ToString();
+            String output = String.Empty;
+            if (brw.StartCommunication())
+                output = "Device Successfully connected";
+            else
+                output = "Could not connect Device";
             end = DateTime.Now;
             PrintMessage(executeCommand, output, start, end);
-            System.Threading.Thread.Sleep(14000);
+            System.Threading.Thread.Sleep(sleepSeconds[speed]);
             
-            executeCommand = "LISTPOS;0;1";
+            executeCommand = "LISTPOS;0;1;2";
             start = DateTime.Now;
             output = brw.SendString(executeCommand).ToString();
             end = DateTime.Now;
             PrintMessage(executeCommand, output, start, end);
-            System.Threading.Thread.Sleep(14000);
+            System.Threading.Thread.Sleep(15000);
             
             executeCommand = "OFF";
             start = DateTime.Now;
-            output = brw.StopCommunication().ToString();
+            if (brw.StopCommunication())
+                output = "Device Successfully disconnected";
+            else
+                output = "Could not disconnect Device. Was it connected?";
             end = DateTime.Now;
             PrintMessage(executeCommand, output, start, end);
         }

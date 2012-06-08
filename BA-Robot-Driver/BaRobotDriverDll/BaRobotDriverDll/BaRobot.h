@@ -52,6 +52,8 @@ namespace BaRobotLibrary
 		void AddCommand(unsigned char command,unsigned char servoFields[]);
 		unsigned char* GetCommand(int index);
 		string ToString();
+		void AskSpeed();
+		int GetSpeed();
 	private:
 		bool isValidTransferMode;
 		bool isConnected;
@@ -60,6 +62,7 @@ namespace BaRobotLibrary
 		int transferMode;
 		int servoCount;
 		int baud;
+		int speed;
 	};
 }
 #endif // _BAROBOT_H
