@@ -81,6 +81,13 @@ void BaRobotWrapper::SetMode(int tm)
 void BaRobotWrapper::SetComPort(int cp)
 {
 	_pBaRobot->SetComPort(cp);
+	speed = _pBaRobot->GetSpeed();
+}
+
+int BaRobotWrapper::GetSpeed()
+{
+	speed = _pBaRobot->GetSpeed();
+	return speed;
 }
 
 // Starten der Kommunikation

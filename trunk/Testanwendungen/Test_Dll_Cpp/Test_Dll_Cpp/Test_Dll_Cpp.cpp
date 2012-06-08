@@ -34,7 +34,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	ManagedWrapper::BaRobot = gcnew BaRobotWrapper();
 	ManagedWrapper::BaRobot ->SetMode(TransferMode::COM);
-	ManagedWrapper::BaRobot ->SetComPort(7);
+	ManagedWrapper::BaRobot ->SetComPort(3);
 
 	// System::String^ str[] = gcnew System::String[];
 	// String^ STORE[] = gcnew String^[] { "00;01;02;03;04;05", "16;17;18;19;20;21"};
@@ -55,6 +55,11 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << "Your choice: "; 
 		input = cin.get(); 
 		handleCommmands(input);
+		
+		cin.clear(); 
+		cin.ignore(cin.rdbuf()->in_avail()); 
+		cin.get(); 
+
 	}while (input != 'e');
 
 	// delete[] CLROfOldCPPClass::Globals::Example;
@@ -99,16 +104,10 @@ void turnRobotOn()
 	if (ManagedWrapper::BaRobot->StartCommunication())
 	{
 		cout << "Device successfully connected..." << endl;
-		cin.clear(); 
-		cin.ignore(cin.rdbuf()->in_avail()); 
-		cin.get(); 
 	}
 	else
 	{
 		cout << "Error: Device could not connect..." << endl;
-		cin.clear(); 
-		cin.ignore(cin.rdbuf()->in_avail()); 
-		cin.get(); 
 	}
 }
 
@@ -118,16 +117,10 @@ void turnRobotOff()
 	if (ManagedWrapper::BaRobot->StopCommunication())
 	{
 		cout << "Device successfully disconnected..." << endl;
-		cin.clear(); 
-		cin.ignore(cin.rdbuf()->in_avail()); 
-		cin.get(); 
 	}
 	else
 	{
 		cout << "Error: Device could not disconnect (was it connected?)..." << endl;
-		cin.clear(); 
-		cin.ignore(cin.rdbuf()->in_avail()); 
-		cin.get(); 
 	}
 }
 
@@ -144,25 +137,20 @@ void sendString()
 	std::string outArray;
 	MarshalString(outString, outArray);
 	cout << "Message received: " << outArray << endl;
-	cin.clear(); 
-    cin.ignore(cin.rdbuf()->in_avail()); 
-    cin.get(); 
 	// system("pause");
 }
 
 // Store Commands
 void sendStorage()
 {
-	array<System::String ^>^ STORE = gcnew array<System::String ^>(2);
+	array<System::String ^>^ STORE = gcnew array<System::String ^>(3);
 	STORE[0]="00;15;120;140;120;90";
-    STORE[1]="00;165;90;160;180;30";
-	String^ outString = ManagedWrapper::BaRobot->StoreCommandList(STORE,2);
+    STORE[1]="00;165;25;90;150;130";
+    STORE[2]="00;165;90;160;180;30";
+	String^ outString = ManagedWrapper::BaRobot->StoreCommandList(STORE,3);
 	std::string outArray;
 	MarshalString(outString, outArray);
 	cout << "Message received: " << outArray << endl;
-	cin.clear(); 
-    cin.ignore(cin.rdbuf()->in_avail()); 
-    cin.get(); 
 }
 
 // Receive Stored Commands
@@ -172,9 +160,6 @@ void getStorage()
 	std::string outArray;
 	MarshalString(outString, outArray);
 	cout << "Message received: " << outArray << endl;
-	cin.clear(); 
-    cin.ignore(cin.rdbuf()->in_avail()); 
-    cin.get(); 
 }
 
 // Delete Stored Commands
@@ -184,9 +169,6 @@ void eraseStorage()
 	std::string outArray;
 	MarshalString(outString, outArray);
 	cout << "Message received: " << outArray << endl;
-	cin.clear(); 
-    cin.ignore(cin.rdbuf()->in_avail()); 
-    cin.get(); 
 }
 
 void demoMode()
@@ -195,7 +177,7 @@ void demoMode()
 	System::Threading::Thread::Sleep(14000);
 	
 	char* sendString = new char[100];
-	sendString = "LISTPOS;0;1";
+	sendString = "LISTPOS;0;1;2";
 	System::String^ str = gcnew System::String(sendString);
 	System::String^ outString = ManagedWrapper::BaRobot->SendString(str);
 	std::string outArray;

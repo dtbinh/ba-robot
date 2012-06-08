@@ -56,6 +56,7 @@ BaRobot::BaRobot()
 	isValidTransferMode = false;
 	isConnected = false;
 	baud = 57600;
+	speed = 3;
 }
 
 // Zum setzen des Modus
@@ -112,8 +113,8 @@ bool BaRobot::StopCommunication()
 	if (isConnected)
 	{
 		char* retVal = SendString("OFF");
-		isConnected = (strcmp(retVal, "OFF"));
-        return ! isConnected;
+		isConnected = (strcmp("OFF", retVal));
+        return (!isConnected);
 	}
 	else 
 		return isConnected;
@@ -215,4 +216,16 @@ BaRobot& BaRobot::operator=(const BaRobot& rhs)
 {
   *this = rhs;
   return *this;
+}
+
+void BaRobot::AskSpeed()
+{
+	char* retVal = communicateRS232("SPEED?");
+	speed = atoi(retVal);
+}
+
+int BaRobot::GetSpeed()
+{
+	AskSpeed();
+	return speed;
 }
