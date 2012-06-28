@@ -1,0 +1,275 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+namespace BaRobotDriverDllCSharp
+{
+    public class BaRobot
+    {
+        int transferMode = -1;
+        int comport = -1;
+        int baudrate = 57600;
+        int speed = -1;
+        bool isValidTransferMode = false;
+        bool isConnected = false;
+        System.IO.Ports.SerialPort serialPort = new System.IO.Ports.SerialPort();
+
+        public BaRobot() : this(Constants.TransferMode.COM)
+        {
+        }
+
+        public BaRobot(int TransferMode, int port = -1)
+        {
+            comport = port;
+            transferMode = TransferMode;
+            isValidTransferMode = false;
+            isConnected = false;
+            baudrate = 57600;
+            speed = 3;
+        }
+
+        public void SetMode(int TransferMode)
+        {
+            transferMode = TransferMode;
+
+            if (transferMode == Constants.TransferMode.USB)
+            {
+                int test = GetUsbDeviceComport("Ba-Robot");
+                comport = test;
+                isValidTransferMode = true;
+            }
+            else if (transferMode == Constants.TransferMode.COM)
+            {
+                isValidTransferMode = false;
+                comport = 0;
+            }
+            else
+            {
+                isValidTransferMode = false;
+                transferMode = Constants.TransferMode.COM;
+                comport = -1;
+            }
+        }
+
+        public void SetComport(int Port)
+        {
+            if (Port > 0 && Port < 21 && transferMode == Constants.TransferMode.COM)
+            {
+                comport = Port;
+                isValidTransferMode = true;
+            }
+            else
+            {
+                comport = -1;
+            }
+        }
+
+        public bool StartCommunication()
+        {
+            serialPort = new System.IO.Ports.SerialPort("COM" + comport.ToString(),baudrate);
+            SendString("ON");
+            return isConnected;
+        }
+
+        public bool StopCommunication()
+        {
+            if (isConnected)
+            {
+                String retval = SendString("OFF");
+                if (retval == "OFF")
+                {
+                    isConnected = false;
+                    serialPort.Dispose();
+                }
+            }
+            return !isConnected;
+        }
+
+        public int GetSpeed()
+        {
+            AskSpeed();
+            return speed;
+        }
+
+        public String SendStringAndGetAnswer(String message)
+        {
+            return SendString(message);
+        }
+
+        public String GetCommandList()
+        {
+            String message = "GET";
+            String answer = SendString(message);
+            String retVal = String.Empty;
+
+            int numberCommands = 0;
+
+            try
+            {
+                numberCommands = Convert.ToInt32(answer);
+            }
+            catch (Exception e)
+            {
+                return answer;
+            }
+            
+            if (numberCommands < 0)
+                return "Nothing Stored";
+
+            // NumberCommands@
+            retVal += numberCommands.ToString() + "@";
+
+            message = "ACK";
+
+            // NumberCommands@Anzahl Servos@
+            retVal = ConcatCommands(message, retVal);
+
+            // NumberCommands@Anzahl Servos@Speed@
+            retVal = ConcatCommands(message, retVal);
+
+            for (int i = 0; i < numberCommands; i++)
+            {
+                // NumberCommands@Anzahl Servos@Speed@command1@command2@...
+                retVal = ConcatCommands(message, retVal);
+            }
+
+            // NumberCommands@Anzahl Servos@Speed@command1@command2@...@FINISHED
+            retVal = ConcatCommands(message, retVal);
+
+            return retVal;
+        }
+
+        public String StoreCommandList(String[] CommandList)
+        {
+            return StoreCommandList(CommandList, CommandList.Length);
+        }
+
+        public String StoreCommandList(String[] CommandList, int Count)
+        {
+            String message = "STORE";
+            String answer = SendString(message);
+            String retVal = String.Empty;
+
+            if (answer != "ACK")
+                return answer;
+
+            message = Count.ToString();
+            answer = SendString(message);
+
+            if (answer != "ACK")
+                return answer;
+
+            for (int i = 0; i < Count; i++)
+            {
+                answer = SendString(CommandList[i]);
+            }
+
+            return "Finished Saving...";
+        }
+
+        public String EraseCommandList()
+        {
+            String message = "ERASE";
+            String retVal = String.Empty;
+            
+            retVal = SendString(message);
+
+            System.Threading.Thread.Sleep(300);
+
+            message = "ACK";
+
+            retVal += SendString(message);
+
+            return retVal;
+        }
+
+        public String OpenGripper()
+        {
+            String message = "OPEN_GRIPPER";
+            String retVal = SendString(message);
+            return retVal;
+        }
+
+        public String CloseGripper()
+        {
+            String message = "CLOSE_GRIPPER";
+            String retVal = SendString(message);
+            return retVal;
+        }
+
+        #region Private Methods
+
+        private String SendString(String message)
+        {
+            if (isValidTransferMode && message.Length < 200 && (isConnected || message == "ON" || message.StartsWith("SPEED")))
+            {
+                if (!isConnected && message == "ON")
+                    isConnected = true;
+
+                return communicateRS232(message);
+
+            }
+            else if (!isConnected)
+                return "Not Connected...";
+            else
+                return "No Valid TransferMode...";
+        }
+
+        private void AskSpeed()
+        {
+            string Speed = SendString("SPEED?");
+            try
+            {
+                speed = Convert.ToInt32(Speed);
+            }
+            catch (Exception e)
+            {
+                speed = 3;
+            }
+        }
+
+        private string communicateRS232(string message)
+        {
+            serialPort.Open();
+            string retval = String.Empty;
+
+            if (serialPort.IsOpen)
+            {
+                serialPort.WriteLine(message);
+
+                int timer = 0;
+
+                while (serialPort.BytesToRead == 0)
+                {
+                    System.Threading.Thread.Sleep(10);
+                    timer++;
+                    if (timer > 15)
+                        break;
+                }
+
+                retval = serialPort.ReadLine();
+
+                serialPort.Close();
+                return retval;
+            }
+            return "Error opening the serial line...";
+        }
+
+        private int GetUsbDeviceComport(string p)
+        {
+            return 0;
+            // throw new NotImplementedException();
+        }
+
+        private String ConcatCommands(String message, String retVal)
+        {
+            String answer = SendString(message);
+            return retVal + answer + "@";
+        }
+
+        #endregion
+
+    }
+}
