@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Management;
 
 namespace BaRobotDriverDllCSharp
 {
@@ -33,12 +34,20 @@ namespace BaRobotDriverDllCSharp
         public void SetMode(int TransferMode)
         {
             transferMode = TransferMode;
+            if (isConnected)
+            {
+                StopCommunication();
+            }
 
             if (transferMode == Constants.TransferMode.USB)
             {
                 int test = GetUsbDeviceComport("Ba-Robot");
                 comport = test;
-                isValidTransferMode = true;
+                if (comport != 0)
+                {
+                    isValidTransferMode = true;
+                    serialPort = new System.IO.Ports.SerialPort("COM" + comport.ToString(), baudrate);
+                }
             }
             else if (transferMode == Constants.TransferMode.COM)
             {
@@ -50,6 +59,7 @@ namespace BaRobotDriverDllCSharp
                 isValidTransferMode = false;
                 transferMode = Constants.TransferMode.COM;
                 comport = -1;
+                serialPort = new System.IO.Ports.SerialPort();
             }
         }
 
@@ -59,6 +69,7 @@ namespace BaRobotDriverDllCSharp
             {
                 comport = Port;
                 isValidTransferMode = true;
+                serialPort = new System.IO.Ports.SerialPort("COM" + comport.ToString(), baudrate);
             }
             else
             {
@@ -66,9 +77,13 @@ namespace BaRobotDriverDllCSharp
             }
         }
 
+        public int GetComport()
+        {
+            return comport;
+        }
+
         public bool StartCommunication()
         {
-            serialPort = new System.IO.Ports.SerialPort("COM" + comport.ToString(),baudrate);
             SendString("ON");
             return isConnected;
         }
@@ -81,7 +96,6 @@ namespace BaRobotDriverDllCSharp
                 if (retval == "OFF")
                 {
                     isConnected = false;
-                    serialPort.Dispose();
                 }
             }
             return !isConnected;
@@ -115,7 +129,7 @@ namespace BaRobotDriverDllCSharp
                 return answer;
             }
             
-            if (numberCommands < 0)
+            if (numberCommands <= 0)
                 return "Nothing Stored";
 
             // NumberCommands@
@@ -199,6 +213,33 @@ namespace BaRobotDriverDllCSharp
             return retVal;
         }
 
+        public override string ToString()
+        {
+            string retval = "BaRobot: Communication: ";
+	        if (transferMode == Constants.TransferMode.COM)
+	        {
+		        retval += "COM, ";
+		        retval += "PORT: " + comport.ToString() + ",";
+		        retval += "Connected: ";
+		        if (isConnected)
+			        retval += "yes";
+		        else
+			        retval += "no";
+	        }
+	        else
+            {
+		        retval += "USB, ";
+                retval += "(virtuell COM: Port: " + comport.ToString() + "), ";
+                retval += "Connected: ";
+                if (isConnected)
+                    retval += "yes";
+                else
+                    retval += "no";
+            }
+
+	        return retval;
+        }
+
         #region Private Methods
 
         private String SendString(String message)
@@ -241,6 +282,8 @@ namespace BaRobotDriverDllCSharp
 
                 int timer = 0;
 
+                System.Threading.Thread.Sleep(250);
+
                 while (serialPort.BytesToRead == 0)
                 {
                     System.Threading.Thread.Sleep(10);
@@ -249,7 +292,8 @@ namespace BaRobotDriverDllCSharp
                         break;
                 }
 
-                retval = serialPort.ReadLine();
+
+                retval = serialPort.ReadExisting();
 
                 serialPort.Close();
                 return retval;
@@ -257,10 +301,58 @@ namespace BaRobotDriverDllCSharp
             return "Error opening the serial line...";
         }
 
-        private int GetUsbDeviceComport(string p)
+        private int GetUsbDeviceComport(string usbName)
         {
-            return 0;
+            string caption = String.Empty;
+
+            if (FindFirstDeviceByCaption(usbName, ref caption))
+            {
+                if (!String.IsNullOrEmpty(caption) && caption.ToLower().Contains("com"))
+                {
+                    string temp = caption.Substring(caption.IndexOf("COM") + 3, 1);
+                    int tempInt = 0;
+                    try
+                    {
+                        tempInt = Convert.ToInt32(temp);
+                    }
+                    catch
+                    {
+                        // nothing to do here
+                    }
+
+                    return tempInt;
+                }
+                else
+                    return 0;
+            }
+            else
+                return 0;
             // throw new NotImplementedException();
+        }
+
+        private bool FindFirstDeviceByCaption(string deviceCaption, ref string caption)
+        {
+            string scope = "root\\CIMV2";
+            string query = String.Format("SELECT * FROM Win32_PnPEntity WHERE Caption like '%{0}%'", deviceCaption);
+            string query2 = String.Format("SELECT * FROM Win32_PnPEntity WHERE Description='{0}'", deviceCaption);
+            using (ManagementObjectSearcher objectSearcher =
+            new ManagementObjectSearcher(scope, query))
+            {
+                foreach (ManagementObject managementObject in objectSearcher.Get())
+                {
+                    foreach (PropertyData property in managementObject.Properties)
+                    {
+                        // Eigenschaften des gefundenen Gerätes anzeigen
+                        if (property.Name.ToLower().Equals("caption"))
+                        {
+                            caption = property.Value.ToString();
+                            break;
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            }
         }
 
         private String ConcatCommands(String message, String retVal)

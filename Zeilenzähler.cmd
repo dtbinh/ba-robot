@@ -10,6 +10,9 @@ echo.
 call count.cmd "Testanwendungen\Test_Dll_C#\TestDLL\TestDLL\" "*.cs"
 @echo off
 echo.
+call count.cmd "Testanwendungen\Test_Dll_C#_With_Ported_Dll\TestDLL\TestDLL\" "*.cs"
+@echo off
+echo.
 call count.cmd "Testanwendungen\Test_Dll_Cpp\Test_Dll_Cpp\" "*.cpp *.h"
 @echo off
 echo.

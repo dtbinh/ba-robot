@@ -20,6 +20,7 @@ void sendStorage();
 void getStorage();
 void eraseStorage();
 void demoMode();
+void getComport();
 
 // Managed Class Wrapper for Global Use of BaRobotWrapper
 ref class ManagedWrapper
@@ -28,13 +29,14 @@ public:
     static BaRobotWrapper^ BaRobot;
 };
 
+int usedCom = 1;
 
 // Main
 int _tmain(int argc, _TCHAR* argv[])
 {
 	ManagedWrapper::BaRobot = gcnew BaRobotWrapper();
-	ManagedWrapper::BaRobot ->SetMode(TransferMode::COM);
-	ManagedWrapper::BaRobot ->SetComPort(3);
+	ManagedWrapper::BaRobot->SetMode(TransferMode::COM);
+	ManagedWrapper::BaRobot->SetComPort(usedCom);
 
 	// System::String^ str[] = gcnew System::String[];
 	// String^ STORE[] = gcnew String^[] { "00;01;02;03;04;05", "16;17;18;19;20;21"};
@@ -47,10 +49,11 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << "1: Turn Robot on " << endl;
 		cout << "2: Turn Robot off" << endl;
 		cout << "3: Send String " << endl;
-		cout << "4. STORE " << endl;
-		cout << "5. GET " << endl;
-		cout << "6. ERASE " << endl;
-		cout << "7. Demo Mode" << endl;
+		cout << "4: STORE " << endl;
+		cout << "5: GET " << endl;
+		cout << "6: ERASE " << endl;
+		cout << "7: Demo Mode" << endl;
+		cout << "8: Change Comport. Current Used: " << usedCom << endl;
 		cout << "e: Exit " << endl;
 		cout << "Your choice: "; 
 		input = cin.get(); 
@@ -92,6 +95,10 @@ void handleCommmands(char input)
 		break;
 	case '7':
 		demoMode();
+		break;
+	case '8':
+		getComport();
+		ManagedWrapper::BaRobot ->SetComPort(usedCom);
 		break;
 	default:
 		break;
@@ -195,4 +202,15 @@ void MarshalString ( String ^ s, string& os )
    const char* chars = (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
    os = chars;
    Marshal::FreeHGlobal(IntPtr((void*)chars));
+}
+
+void getComport()
+{
+	char line[3];
+	cout << "Comport Number: ";
+	cin.clear(); 
+	cin.ignore(cin.rdbuf()->in_avail()); 
+	cin.getline(line, 2);
+	if ( atoi(line) != 0 )
+		usedCom = atoi(line);
 }
