@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
+using Con = System.Console;
 
 namespace TestDLL
 {
@@ -17,78 +18,112 @@ namespace TestDLL
     
     class Program
     {
-        static int speed = 3;
+        static int speed          = 3;
         //                  speed = {     0,     1,     2,     3,     4,     5} 
         static int[] sleepSeconds = { 38200, 32200, 25700, 19400, 13100, 12400 };
+        static string[] STORE     = { "00;15;120;140;120;90", "00;165;25;90;150;130", "00;165;90;160;180;30" };
+        static int usedCom        = 1;
 
         static void Main(string[] args)
         {   
             BaRobotLibrary.BaRobotWrapper brw = new BaRobotLibrary.BaRobotWrapper();
             brw.SetMode(BaRobotLibrary.TransferMode.COM);
-            brw.SetComPort(3);
-            string[] STORE = { "00;15;120;140;120;90", "00;165;25;90;150;130","00;165;90;160;180;30" };
-            speed = brw.GetSpeed();
+            brw.SetComPort(usedCom);
 
-            while (true)
+            string input = "e";
+            do
             {
-                Console.Write("Input : ");
-                String temp = Console.ReadLine();
-                String output = String.Empty;
-                DateTime start = DateTime.Now;
-                speed = brw.GetSpeed();
-                Console.WriteLine("Read Speed is: " + speed.ToString());
-                switch (temp)
-                {
-                    case "exit":
-                        break;
-                    case "DEMO":
-                        Console.WriteLine("DemoMode Started!!!");
-                        DemoMode(brw);
-                        break;
-                    case "DEMO2":
-                        Console.WriteLine("Demo2Mode Started!!!");
-                        Demo2Mode(brw);
-                        break;
-                    case "ON":
-                        if (brw.StartCommunication())
-                            output = "Device Successfully connected";
-                        else
-                            output = "Could not connect Device";
-                        break;
-                    case "STORE":
-                        output = brw.StoreCommandList(STORE,STORE.Length);
-                        break;
-                    case "GET":
-                        output = brw.GetCommandList();
-                        break;
-                    case "OFF":
-                        if (brw.StopCommunication())
-                            output = "Device Successfully disconnected";
-                        else
-                            output = "Could not disconnect Device. Was it connected?";
-                        break;
-                    case "ERASE":
-                        output = brw.EraseCommandList();
-                        break;
-                    case "OPEN":
-                        output = brw.OpenGripper();
-                        break;
-                    case "CLOSE":
-                        output = brw.CloseGripper();
-                        break;
-                    case "CLS":
-                        Console.Clear();
-                        break;
-                    default:
-                        output = brw.SendString(temp);
-                        break;
-                }
+                Con.Clear();
+                Con.WriteLine("Eingabe: ");
+                Con.WriteLine("1: Turn Robot on ");
+                Con.WriteLine("2: Turn Robot off");
+                Con.WriteLine("3: Send String ");
+                Con.WriteLine("4: STORE ");
+                Con.WriteLine("5: GET ");
+                Con.WriteLine("6: ERASE ");
+                Con.WriteLine("7: Demo Mode");
+                Con.WriteLine("8: Change Comport. Current Used: " + usedCom);
+                Con.WriteLine("e: Exit ");
+                Con.WriteLine("Additional Input: CLS, OPEN, CLOSE");
+                Con.Write("Your choice: ");
+                input = Con.ReadLine();
+                handleCommmands(input, brw);
 
-                if (temp == "exit")
+            } while (input != "e");
+        }
+
+        private static void handleCommmands(string input, BaRobotLibrary.BaRobotWrapper brw)
+        {
+            DateTime start = DateTime.Now;
+            string output = String.Empty;
+            switch (input)
+            {
+                case "1":
+                    if (brw.StartCommunication())
+                        output = "Device Successfully connected";
+                    else
+                        output = "Could not connect Device";
                     break;
+                case "2":
+                    if (brw.StopCommunication())
+                        output = "Device Successfully disconnected";
+                    else
+                        output = "Could not disconnect Device. Was it connected?";
+                    break;
+                case "3":
+                    //TODO: Sendstring
+                    break;
+                case "4":
+                    output = brw.StoreCommandList(STORE, STORE.Length);
+                    break;
+                case "5":
+                    output = brw.GetCommandList();
+                    break;
+                case "6":
+                    output = brw.EraseCommandList();
+                    break;
+                case "7":
+                    Console.WriteLine("Demo2Mode Started!!!");
+                    Demo2Mode(brw);
+                    break;
+                case "8":
+                    changeComport(brw);
+                    break;
+                case "e":
+                    break;
+                case "OPEN":
+                    output = brw.OpenGripper();
+                    break;
+                case "CLOSE":
+                    output = brw.CloseGripper();
+                    break;
+                case "CLS":
+                    Console.Clear();
+                    break;
+                default:
+                    output = brw.SendString(input);
+                    speed = brw.GetSpeed();
+                    break;
+            }
+            Con.WriteLine(output);
+            Con.Write("Press any key...");
+            Con.ReadKey();
+        }
 
-                if (temp != "CLS" && output != String.Empty)
-                    Console.WriteLine("Output: " + output);
+        private static void changeComport(BaRobotLibrary.BaRobotWrapper brw)
+        {
+            string comp = String.Empty;
+            Con.Write("Comport Number: ");
+            comp = Con.ReadLine();
+            try
+            {
+                int temp = Convert.ToInt32(comp);
+                brw.SetComPort(temp);
+                usedCom = temp;
+            }
+            catch (Exception e)
+            {
+                Con.WriteLine(e.ToString());
             }
         }
 
