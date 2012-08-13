@@ -181,7 +181,7 @@ void eraseStorage()
 void demoMode()
 {
 	turnRobotOn();
-	System::Threading::Thread::Sleep(14000);
+	System::Threading::Thread::Sleep(19400);
 	
 	char* sendString = new char[100];
 	sendString = "LISTPOS;0;1;2";
@@ -191,7 +191,7 @@ void demoMode()
 	MarshalString(outString, outArray);
 	cout << "Message received: " << outArray << endl;
 
-	System::Threading::Thread::Sleep(14000);
+	System::Threading::Thread::Sleep(19400);
 	turnRobotOff();
 }
 

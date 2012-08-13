@@ -1,6 +1,7 @@
 // Arduino Libraries must be included here first
 #include <EEPROM.h>
 #include <Servo.h>
+#include <MemoryFree.h>
 #include "Constants.h"
 
 // Globale Variablen
@@ -51,8 +52,18 @@ void loop() {
       if (GLOBAL_IS_CONNECTED || INPUT_STRING == "ON" || INPUT_STRING.startsWith("SPEED") )
         handleSerialCommands();
         
+      if (INPUT_STRING == "OFF")
+        software_Reset();
+     
       ResetMessage();
     }
+    // Serial1.print("freeMemory()=");
+    // Serial1.println(freeMemory());
+    
   }
 }
 
+void software_Reset() // Restarts program from beginning but does not reset the peripherals and registers
+{
+  asm volatile ("  jmp 0");
+}  
