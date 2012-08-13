@@ -7,6 +7,9 @@ echo.
 call count.cmd "BA-Robot-Driver\BaRobotDriverDll\BaRobotDriverDll\" "*.cpp *.h"
 @echo off
 echo.
+call count.cmd "BA-Robot-Driver\BaRobotDriverDllC#\BaRobotDriverDllCSharp\" "*.cs"
+@echo off
+echo.
 call count.cmd "Testanwendungen\Test_Dll_C#\TestDLL\TestDLL\" "*.cs"
 @echo off
 echo.
