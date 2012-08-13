@@ -29,7 +29,7 @@ boolean SaveToEEPROM()
 
   SaveAnzahlBefehle(numberCommands);
   SaveAnzahlServos();
-  SaveSpeed(5);
+  SaveSpeed(3);
 
   for (int i = 0; i < numberCommands; i++)
   {
@@ -159,7 +159,7 @@ void SaveSpeed(int Speed)
   if (Speed <= 5)
     EEPROM.write(3,Speed);
   else 
-    EEPROM.write(3,0x05);
+    EEPROM.write(3,0x03);
 }
 
 int GetSpeed()
